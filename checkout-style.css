@@ -1,0 +1,129 @@
+/* --- checkout-style.css --- */
+
+:root {
+    --brand-red: #8B0000;
+    --brand-navy: #24214B;
+    --bg-gray: #FAFAFA;
+    --border-line: #E1E1E1;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+/* FIX SCROLL & CLICK */
+body { height: 100vh; overflow-x: hidden; overflow-y: auto; }
+.checkout-container { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+
+/* BAGIAN KIRI */
+.left-section {
+    width: 55%; padding: 50px 8%; background: #ffffff;
+    border-right: 1px solid var(--border-line);
+    display: flex; flex-direction: column; position: relative; z-index: 10;
+}
+
+.header-logo a {
+    font-size: 24px; font-weight: 700; color: var(--brand-red);
+    text-decoration: none; display: flex; align-items: center; gap: 10px;
+}
+
+/* Navigasi Breadcrumb Baru */
+.breadcrumb { margin: 30px 0; font-size: 13px; color: #666; display: flex; align-items: center; }
+.active-link { 
+    color: var(--brand-red); text-decoration: none; cursor: pointer; font-weight: 500; transition: 0.2s;
+}
+.active-link:hover { text-decoration: underline; color: #660000; }
+.breadcrumb .current { color: var(--brand-navy); font-weight: 700; }
+.breadcrumb i { margin: 0 10px; font-size: 10px; color: #ccc; }
+
+.title-text { font-size: 18px; color: var(--brand-navy); margin-bottom: 20px; font-weight: 600; }
+
+/* Input & Form */
+.input-group { margin-bottom: 15px; position: relative; z-index: 20; }
+.input-group label { display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 500; }
+.input-group input, .input-group textarea {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+    font-size: 14px; outline: none; transition: 0.3s; background: white;
+}
+.input-group input:focus, .input-group textarea:focus {
+    border-color: var(--brand-red); box-shadow: 0 0 5px rgba(139,0,0,0.1);
+}
+
+.checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+.checkbox-wrapper label { font-size: 14px; color: #555; cursor: pointer; }
+
+/* Payment Box */
+.payment-options {
+    border: 1px solid #ddd; border-radius: 6px; overflow: hidden; position: relative; z-index: 20;
+}
+.payment-card {
+    display: flex; align-items: center; padding: 15px; background: #fff; 
+    cursor: pointer; transition: 0.2s; border-bottom: 1px solid #eee;
+}
+.payment-card:last-child { border-bottom: none; }
+.payment-card:hover { background: #f9f9f9; }
+
+.radio-col input { accent-color: var(--brand-red); transform: scale(1.2); }
+.info-col { margin-left: 15px; display: flex; flex-direction: column; }
+.pay-title { font-size: 14px; font-weight: 600; color: var(--brand-navy); }
+.pay-desc { font-size: 12px; color: #888; }
+
+/* Tombol Action */
+.action-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 40px; position: relative; z-index: 20;
+}
+.back-link { text-decoration: none; color: var(--brand-red); font-size: 14px; }
+.back-link:hover { text-decoration: underline; }
+
+.btn-order {
+    background-color: var(--brand-red); color: white; padding: 14px 30px;
+    border: none; border-radius: 6px; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: 0.3s;
+}
+.btn-order:hover { background-color: #660000; box-shadow: 0 4px 15px rgba(139,0,0,0.3); }
+
+.footer-note { margin-top: auto; padding-top: 40px; font-size: 12px; color: #ccc; }
+
+/* BAGIAN KANAN */
+.right-section {
+    width: 45%; padding: 50px 6%; background: var(--bg-gray);
+    display: flex; flex-direction: column; border-left: 1px solid var(--border-line);
+}
+
+.order-item { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.img-badge-wrapper { position: relative; width: 64px; height: 64px; }
+.img-badge-wrapper img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);
+}
+.qty-badge {
+    position: absolute; top: -8px; right: -8px; background: #777; color: white;
+    width: 20px; height: 20px; border-radius: 50%; font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.item-text { flex: 1; }
+.item-title { font-size: 14px; font-weight: 600; color: var(--brand-navy); }
+.item-var { font-size: 12px; color: #888; }
+.item-price { font-size: 14px; font-weight: 600; color: #333; }
+
+.divider { height: 1px; background: #e6e6e6; margin: 20px 0; }
+
+.voucher-box { display: flex; gap: 10px; }
+.voucher-box input {
+    flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; outline: none;
+}
+.voucher-box button {
+    padding: 0 20px; background: #ddd; border: 1px solid #ccc;
+    color: #555; border-radius: 5px; cursor: pointer; font-weight: 600;
+}
+
+.price-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #555; }
+.total { font-size: 18px; color: var(--brand-navy); margin-top: 5px; font-weight: 700; }
+.total-nominal { color: var(--brand-navy); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .checkout-container { flex-direction: column-reverse; }
+    .left-section, .right-section { width: 100%; padding: 30px 20px; border: none; }
+    .right-section { background: #fafafa; border-bottom: 1px solid #eee; }
+}
