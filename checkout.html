@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Olivia Meat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="checkout-style.css">
+</head>
+<body>
+
+    <div class="checkout-container">
+        <div class="left-section">
+            
+            <div class="header-logo">
+                <a href="index.html"><i class="fas fa-cow"></i> Olivia Meat</a>
+            </div>
+
+            <div class="breadcrumb">
+                <a href="cart.html" class="active-link">Cart</a> 
+                <i class="fas fa-chevron-right"></i>
+                <span class="current">Payment</span>
+            </div>
+
+            <div class="section-box">
+                <h2 class="title-text">Data Pemesan</h2>
+                <form id="checkoutForm">
+                    <div class="input-group">
+                        <label>Nama Lengkap (Contact)</label>
+                        <input type="text" id="customerName" placeholder="Masukkan nama Anda" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Nomor Telepon / WhatsApp (Ship to)</label>
+                        <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Alamat Pengiriman</label>
+                        <textarea id="customerAddress" rows="2" placeholder="Alamat lengkap, patokan, dll" required></textarea>
+                    </div>
+
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="saveInfo">
+                        <label for="saveInfo">Simpan informasi ini untuk pembelian berikutnya</label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="section-box" style="margin-top: 30px;">
+                <h2 class="title-text">Payment Method</h2>
+                <div class="payment-options">
+                    <label class="payment-card">
+                        <div class="radio-col">
+                            <input type="radio" name="payment" value="Transfer Bank" checked>
+                        </div>
+                        <div class="info-col">
+                            <span class="pay-title">Transfer Bank</span>
+                            <span class="pay-desc">BCA / Mandiri / BRI</span>
+                        </div>
+                    </label>
+
+                    <label class="payment-card">
+                        <div class="radio-col">
+                            <input type="radio" name="payment" value="COD (Bayar di Tempat)">
+                        </div>
+                        <div class="info-col">
+                            <span class="pay-title">COD</span>
+                            <span class="pay-desc">Bayar tunai saat kurir sampai</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <a href="cart.html" class="back-link">&lt; Back to Cart</a>
+                <button type="button" class="btn-order" onclick="kirimKeWA()">Order Now</button>
+            </div>
+            
+            <div class="footer-note">&copy; 2024 Olivia Meat 'n Fresh</div>
+        </div>
+
+
+        <div class="right-section">
+            <div class="order-item">
+                <div class="img-badge-wrapper">
+                    <img src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=200&q=60" alt="Daging">
+                    <span class="qty-badge">1</span>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Sirloin Premium Import</div>
+                    <div class="item-var">Pack 500gr</div>
+                </div>
+                <div class="item-price">Rp 140.000</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="voucher-box">
+                <input type="text" placeholder="Coupon code">
+                <button>Apply</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="price-row">
+                <span>Subtotal</span>
+                <span>Rp 140.000</span>
+            </div>
+            <div class="price-row">
+                <span>Shipping</span>
+                <span style="font-size: 12px;">Dihitung via WhatsApp</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="price-row total">
+                <span>Total</span>
+                <span class="total-nominal">Rp 140.000</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function kirimKeWA() {
+            var nama = document.getElementById("customerName").value;
+            var telepon = document.getElementById("customerPhone").value;
+            var alamat = document.getElementById("customerAddress").value;
+            
+            var metodeBayarElement = document.querySelector('input[name="payment"]:checked');
+            var metodeBayar = metodeBayarElement ? metodeBayarElement.value : "-";
+
+            if (nama === "" || telepon === "" || alamat === "") {
+                alert("Mohon lengkapi Nama, Nomor Telepon, dan Alamat pengiriman.");
+                return;
+            }
+
+            // Ambil Produk Otomatis dari Tampilan Kanan
+            var listProduk = "";
+            var items = document.querySelectorAll('.order-item');
+            
+            items.forEach(function(item) {
+                var namaProduk = item.querySelector('.item-title').innerText;
+                var varian = item.querySelector('.item-var').innerText;
+                var qty = item.querySelector('.qty-badge').innerText;
+                
+                listProduk += "📦 " + namaProduk + " (" + varian + ") - Qty: " + qty + "\n";
+            });
+
+            var totalHarga = document.querySelector('.total-nominal').innerText;
+
+            var pesan = 
+                "*Halo Admin Olivia Meat, saya mau pesan!* 🥩\n\n" +
+                "*DATA PEMESAN:*\n" +
+                "👤 Nama: " + nama + "\n" +
+                "📱 No. HP: " + telepon + "\n" +
+                "🏠 Alamat: " + alamat + "\n\n" +
+                "*DETAIL PESANAN:*\n" +
+                listProduk + "\n" +
+                "💰 *TOTAL BAYAR: " + totalHarga + "*\n" +
+                "💳 Metode: " + metodeBayar + "\n\n" +
+                "Mohon diproses, terima kasih!";
+
+            // Nomor Tujuan
+            var nomorToko = "6282136656877"; 
+            var linkWA = "https://wa.me/" + nomorToko + "?text=" + encodeURIComponent(pesan);
+            window.open(linkWA, '_blank');
+        }
+    </script>
+</body>
+</html>
