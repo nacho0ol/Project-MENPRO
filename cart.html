@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keranjang - Olivia Meat</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container nav-content">
+        <a href="index.html" class="logo"
+          ><i class="fas fa-cow"></i> Olivia Meat</a
+        >
+        <div class="nav-icons">
+          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+          <a href="profile.html"><i class="fas fa-user"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container cart-wrapper">
+      <div class="cart-list">
+        <h3>Keranjang Belanja</h3>
+
+        <div class="cart-item">
+          <img
+            src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=100&q=60"
+            style="
+              width: 80px;
+              height: 80px;
+              object-fit: cover;
+              border-radius: 5px;
+            "
+          />
+          <div style="flex: 1">
+            <div style="font-weight: 600">Sirloin Premium</div>
+            <div style="color: var(--primary-red)">Rp 140.000</div>
+          </div>
+          <div class="qty-selector">
+            <div class="qty-btn">-</div>
+            <div class="qty-val">1</div>
+            <div class="qty-btn">+</div>
+          </div>
+          <div style="font-weight: 700">Rp 140.000</div>
+          <i class="fas fa-trash" style="color: #999; cursor: pointer"></i>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <h3>Ringkasan</h3>
+        <br />
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+          "
+        >
+          <span>Subtotal</span>
+          <span>Rp 140.000</span>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 18px;
+          "
+        >
+          <span>Total</span>
+          <span>Rp 140.000</span>
+        </div>
+        <button class="btn-checkout">Checkout</button>
+      </div>
+    </div>
+  </body>
+</html>

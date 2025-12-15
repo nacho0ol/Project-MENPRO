@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Olivia Meat</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container nav-content">
+        <a href="index.html" class="logo"
+          ><i class="fas fa-cow"></i> Olivia Meat</a
+        >
+        <div class="nav-icons">
+          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+          <a href="profile.html"><i class="fas fa-user"></i></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="profile-header-bg">
+      <h1>HEY,<br />LOREM IPSUM</h1>
+    </div>
+
+    <div style="background: #eee; text-align: center; padding: 15px 0">
+      <span style="margin: 0 20px; color: #666; cursor: pointer"
+        >Order History</span
+      >
+      <span
+        style="
+          margin: 0 20px;
+          font-weight: 700;
+          border-bottom: 2px solid var(--secondary-navy);
+        "
+        >Profile</span
+      >
+    </div>
+
+    <div class="container profile-container" style="margin-top: 30px">
+      <div class="profile-content">
+        <h2 style="margin-bottom: 20px">Edit Profile</h2>
+
+        <form>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div class="form-group">
+              <label>Nama Depan</label>
+              <input type="text" name="namaDepan" value="Lorem" />
+            </div>
+            <div class="form-group">
+              <label>Nama Belakang</label>
+              <input type="text" name="namaBelakang" value="Ipsum" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Alamat Lengkap</label>
+            <input
+              type="text"
+              name="alamat"
+              value="Jl. Kaliurang Km 5, Yogyakarta"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>No. Telepon (WhatsApp)</label>
+            <input type="text" name="no_telp" value="08123456789" />
+          </div>
+
+          <button
+            class="btn-cta"
+            style="
+              background: var(--secondary-navy);
+              color: white;
+              border: none;
+              margin-top: 10px;
+            "
+          >
+            Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

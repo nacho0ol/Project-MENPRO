@@ -1,0 +1,238 @@
+/* --- style.css --- */
+:root {
+  --primary-red: #8b0000; /* Warna Brand Utama */
+  --secondary-navy: #24214b; /* Warna Teks / Heading / Header Profile */
+  --bg-color: #f5f5f5;
+  --white: #ffffff;
+  --gray-border: #e6e6e6;
+  --success-green: #2ecc71;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background-color: var(--bg-color);
+  color: var(--secondary-navy);
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+ul {
+  list-style: none;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* NAVBAR */
+.navbar {
+  background-color: var(--white);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-red);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-links {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+.nav-icons {
+  display: flex;
+  gap: 20px;
+  font-size: 18px;
+}
+
+/* HERO SECTION */
+.hero-section {
+  padding: 40px 0;
+}
+.hero-banner {
+  background-color: var(--primary-red);
+  color: var(--white);
+  border-radius: 20px;
+  padding: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+.hero-text h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+.btn-cta {
+  background-color: var(--white);
+  color: var(--primary-red);
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  display: inline-block;
+  margin-top: 20px;
+}
+.hero-image img {
+  max-width: 400px;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+}
+
+/* PRODUCT CARD (Index) */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 50px;
+}
+.product-card {
+  background: var(--white);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.card-info {
+  padding: 15px;
+}
+.card-title {
+  font-weight: 600;
+  color: var(--secondary-navy);
+}
+.card-price {
+  color: var(--primary-red);
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+/* DETAIL PAGE */
+.detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  padding: 40px 20px;
+  background: var(--white);
+  border-radius: 20px;
+  margin-top: 40px;
+}
+.qty-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--gray-border);
+  width: fit-content;
+  border-radius: 5px;
+}
+.qty-btn {
+  padding: 5px 15px;
+  cursor: pointer;
+}
+.qty-val {
+  padding: 5px 10px;
+  font-weight: 600;
+}
+.btn-add-cart {
+  background-color: var(--success-green);
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* CART PAGE */
+.cart-wrapper {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-top: 40px;
+}
+.cart-list,
+.cart-summary {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--gray-border);
+}
+.btn-checkout {
+  background: var(--secondary-navy);
+  color: white;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* PROFILE PAGE */
+.profile-header-bg {
+  background-color: var(--secondary-navy);
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+  margin-bottom: -30px;
+}
+.profile-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+.profile-content {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
