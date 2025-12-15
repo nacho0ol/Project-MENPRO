@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+    --brand-navy: #24214B;
+    --brand-red: #8B0000;
+    --bg-gray: #f1f5f9;
+    --text-dark: #1e293b;
+    --white: #ffffff;
+}
+
+* {
+    padding: 0; margin: 0; box-sizing: border-box;
+    list-style-type: none; text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+body { background: var(--bg-gray); }
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    left: 0; top: 0; height: 100%;
+    background: var(--brand-navy);
+    z-index: 100;
+    transition: width 300ms;
+}
+
+.sidebar-brand {
+    height: 90px; padding: 1rem 0rem 1rem 2rem;
+    color: var(--white); font-size: 1.5rem; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+}
+
+.sidebar-menu { margin-top: 1rem; }
+.sidebar-menu li { width: 100%; margin-bottom: 1.3rem; padding-left: 1rem; }
+.sidebar-menu a {
+    padding-left: 1rem; display: block; color: #cbd5e1; font-size: 1.1rem;
+    display: flex; align-items: center; gap: 1rem; transition: 0.3s;
+}
+.sidebar-menu a:hover, .sidebar-menu li.active a {
+    color: var(--white); padding-left: 1.5rem;
+}
+.sidebar-menu li.active a { border-left: 4px solid var(--brand-red); }
+
+.sidebar-menu li.logout { margin-top: 50px; }
+.sidebar-menu li.logout a { color: #ff6b6b; }
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    margin-left: 250px;
+    transition: margin-left 300ms;
+}
+
+/* Header */
+header {
+    background: var(--white);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 1.5rem;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+    position: sticky; top: 0; z-index: 90;
+}
+header h2 { color: var(--text-dark); }
+
+.user-wrapper {
+    display: flex; align-items: center; gap: 10px;
+}
+.user-wrapper img { border-radius: 50%; border: 1px solid #ccc; }
+.user-wrapper h4 { color: var(--brand-navy); margin-bottom: 0; }
+.user-wrapper small { display: inline-block; color: #888; }
+
+/* Main Data Cards */
+main { padding: 2rem 1.5rem; }
+
+.card-section {
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.card-header {
+    padding: 1rem; border-bottom: 1px solid #f0f0f0;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.card-header h3 { color: var(--brand-navy); }
+
+.btn-add {
+    background: var(--brand-navy); color: var(--white);
+    padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer;
+    font-size: 14px;
+}
+.btn-add:hover { background: #1a1838; }
+
+/* Tables */
+.card-body { padding: 1rem; overflow-x: auto; }
+table { border-collapse: collapse; }
+thead tr { border-bottom: 1px solid #f0f0f0; }
+thead td { font-weight: 700; color: #555; padding: 1rem; }
+tbody tr { border-bottom: 1px solid #f0f0f0; }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 1rem; color: #222; font-size: 14px; }
+
+.prod-img { width: 50px; height: 50px; border-radius: 5px; object-fit: cover; }
+
+/* Badges & Buttons */
+.stock-badge {
+    padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.stock-badge.safe { background: #d1fae5; color: #065f46; }
+.stock-badge.low { background: #fee2e2; color: #991b1b; }
+
+.btn-icon {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd;
+    background: white; cursor: pointer; color: #555; transition: 0.2s;
+}
+.btn-icon:hover { background: #eee; }
+.btn-icon.plus { color: green; }
+.btn-icon.minus { color: red; }
+
+.btn-action {
+    padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; color: white;
+}
+.edit { background: #f59e0b; }
+.delete { background: #ef4444; }
+
+.status {
+    padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: 600;
+}
+.status.pending { background: #fef3c7; color: #92400e; }
+.status.completed { background: #d1fae5; color: #065f46; }
+
+.status-select {
+    padding: 5px; border-radius: 5px; border: 1px solid #ddd;
+}
+.btn-view {
+    background: var(--brand-navy); color: white; border: none;
+    padding: 5px 10px; border-radius: 5px; cursor: pointer;
+}
+
+/* Responsive */
+@media only screen and (max-width: 960px) {
+    .sidebar { width: 70px; }
+    .sidebar .sidebar-brand, .sidebar li { padding-left: 1rem; text-align: center; }
+    .sidebar li a { padding-left: 0; justify-content: center; }
+    .sidebar li a span, .sidebar-brand span { display: none; }
+    .main-content { margin-left: 70px; }
+    .user-wrapper h4, .user-wrapper small { display: none; }
+}

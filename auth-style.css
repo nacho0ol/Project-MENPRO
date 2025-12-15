@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-/* --- 1. SETTING WARNA SESUAI WEBSITE --- */
+/* --- 1. PALET WARNA SESUAI WEBSITE --- */
 :root {
-    /* Merah Marun (Sama dengan Hero Banner) */
-    --brand-red: #a00000; 
+    /* Merah Marun (Sama dengan Hero Banner Landing Page) */
+    --brand-red: #8B0000; 
     
-    /* Navy Gelap (Sama dengan Navbar/Text) */
+    /* Navy Gelap (Sama dengan Navbar/Logo) */
     --brand-navy: #24214B; 
     
-    /* Background Halaman (Sama dengan Body Website) */
+    /* Background Halaman (Putih Bersih) */
     --bg-page: #f5f5f5;
     
-    /* Warna Putih Teks */
+    /* Warna Teks Putih (untuk di dalam kotak merah) */
     --text-white: #ffffff;
 }
 
@@ -23,14 +23,14 @@
     color: var(--text-white);
 }
 
-/* Background Halaman jadi TERANG (Putih/Abu) agar sama dengan Web */
+/* Background Halaman jadi TERANG (Putih) agar sama dengan Web */
 body {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: var(--bg-page); /* Ubah jadi terang */
+    background: var(--bg-page); /* Background terang */
     padding: 20px;
 }
 
@@ -39,24 +39,27 @@ body {
     text-align: center;
     padding: 15px;
     font-size: 14px;
-    color: var(--brand-navy); /* Footer text jadi gelap */
+    /* Teks footer jadi gelap agar terbaca di background putih */
+    color: var(--brand-navy); 
 }
 
-/* --- 2. KOTAK LOGIN (THEME HERO BANNER) --- */
+/* --- 2. KOTAK LOGIN (STYLE HERO BANNER) --- */
 .auth-wrapper {
     position: relative;
     width: 100%;
     max-width: 900px;
     height: 550px;
     
-    /* Background dasar kotak jadi MERAH (Seperti Hero Banner) */
+    /* Background dasar kotak jadi MERAH (Identik dengan Banner Diskon) */
     background: var(--brand-red);
     
-    /* Shadow halus agar terlihat timbul di background putih */
-    box-shadow: 0 20px 50px rgba(139, 0, 0, 0.3);
+    /* Shadow soft/halus */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     
     border-radius: 20px;
     overflow: hidden;
+    /* Hapus border merah karena backgroundnya sudah merah */
+    border: none;
 }
 
 /* Layer konten (Form & Text) */
@@ -80,7 +83,7 @@ body {
     height: 600px;
     width: 850px;
     
-    /* Gradient Navy (Sama dengan warna Navbar/Text Web) */
+    /* Gradient Navy (Mengambil warna Navbar) */
     background: linear-gradient(45deg, var(--brand-navy), #1a1838);
     
     transform: rotate(10deg) skewY(40deg);
@@ -100,7 +103,7 @@ body {
     top: 100%;
     height: 700px;
     width: 850px;
-    background: var(--brand-navy); /* Navy */
+    background: var(--brand-navy); /* Warna solid Navy */
     border-top: 2px solid rgba(255,255,255,0.2);
     transform: rotate(0deg) skewY(0deg);
     transform-origin: bottom left;
@@ -112,28 +115,9 @@ body {
     transform: rotate(-11deg) skewY(-41deg);
 }
 
-
-/* --- 4. STYLE TEXT & INPUT --- */
+/* --- 4. STYLE FORM & INPUT --- */
 .credentials-panel.signin { left: 0; padding: 0 40px; }
 .credentials-panel.signup { right: 0; padding: 0 60px; }
-
-/* Animasi Slide Element */
-.credentials-panel.signin .slide-element { transform: translateX(0%); transition: .7s; opacity: 1; }
-.auth-wrapper.toggled .credentials-panel.signin .slide-element { transform: translateX(-120%); opacity: 0; }
-
-.credentials-panel.signup .slide-element { transform: translateX(120%); transition: .7s ease; opacity: 0; filter: blur(10px); }
-.auth-wrapper.toggled .credentials-panel.signup .slide-element { transform: translateX(0%); opacity: 1; filter: blur(0px); }
-
-/* Delay Animations */
-.credentials-panel.signin .slide-element:nth-child(1) { transition-delay: 0.1s; }
-.credentials-panel.signin .slide-element:nth-child(2) { transition-delay: 0.2s; }
-.credentials-panel.signin .slide-element:nth-child(3) { transition-delay: 0.3s; }
-.credentials-panel.signin .slide-element:nth-child(4) { transition-delay: 0.4s; }
-
-.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(1) { transition-delay: 0.4s; }
-.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(2) { transition-delay: 0.5s; }
-.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(3) { transition-delay: 0.6s; }
-.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(4) { transition-delay: 0.7s; }
 
 /* Judul Login/Register */
 .credentials-panel h2 {
@@ -143,7 +127,7 @@ body {
     color: var(--text-white);
 }
 
-/* Input Field */
+/* Input Field Style */
 .credentials-panel .field-wrapper {
     position: relative;
     width: 100%;
@@ -159,7 +143,7 @@ body {
     outline: none;
     font-size: 16px;
     color: var(--text-white);
-    border-bottom: 2px solid rgba(255,255,255,0.4);
+    border-bottom: 2px solid rgba(255,255,255,0.4); /* Garis transparan putih */
     padding-right: 23px;
     transition: .5s;
 }
@@ -175,7 +159,7 @@ body {
     left: 0;
     transform: translateY(-50%);
     font-size: 14px;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.8);
     pointer-events: none;
     transition: .5s;
 }
@@ -193,7 +177,7 @@ body {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.8);
 }
 
 /* --- 5. TOMBOL (BUTTON) --- */
@@ -201,21 +185,23 @@ body {
     position: relative;
     width: 100%;
     height: 45px;
-    background: var(--text-white); /* Tombol Putih */
-    color: var(--brand-red);       /* Teks Merah */
+    /* Tombol Putih Bersih */
+    background: var(--text-white); 
+    /* Teks Merah agar kontras */
+    color: var(--brand-red);       
     border-radius: 40px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 700;
     border: none;
-    margin-top: 10px;
+    margin-top: 20px;
     transition: 0.3s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .submit-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
 /* Link Ganti Login/Register */
@@ -247,19 +233,27 @@ body {
 .welcome-section.signin { right: 0; text-align: right; padding: 0 40px 60px 100px; }
 .welcome-section.signup { left: 0; text-align: left; padding: 0 100px 60px 40px; pointer-events: none; }
 
-.welcome-section.signin .slide-element { transform: translateX(0); transition: .7s ease; opacity: 1; }
-.auth-wrapper.toggled .welcome-section.signin .slide-element { transform: translateX(120%); opacity: 0; }
-
-.welcome-section.signup .slide-element { transform: translateX(-120%); transition: .7s ease; opacity: 0; }
-.auth-wrapper.toggled .welcome-section.signup .slide-element { transform: translateX(0%); opacity: 1; }
-
+/* Teks Besar "OLIVIA MEAT" */
 .welcome-section h2 {
     font-size: 40px;
     line-height: 1.2;
     font-weight: 800;
-    color: rgba(255,255,255,0.2);
-    -webkit-text-stroke: 1px rgba(255,255,255,0.8); /* Outline text effect */
+    color: rgba(255,255,255,0.2); /* Transparan elegan */
+    -webkit-text-stroke: 1px rgba(255,255,255,0.8); /* Outline text */
 }
+
+/* --- 7. ANIMASI (STANDARD) --- */
+.credentials-panel.signin .slide-element { transform: translateX(0%); transition: .7s; opacity: 1; }
+.auth-wrapper.toggled .credentials-panel.signin .slide-element { transform: translateX(-120%); opacity: 0; transition-delay: 0s; } /* Fix delay */
+
+.credentials-panel.signup .slide-element { transform: translateX(120%); transition: .7s ease; opacity: 0; filter: blur(10px); }
+.auth-wrapper.toggled .credentials-panel.signup .slide-element { transform: translateX(0%); opacity: 1; filter: blur(0px); }
+.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(1) { transition-delay: 0.4s; }
+
+.welcome-section.signin .slide-element { transform: translateX(0); transition: .7s ease; opacity: 1; }
+.auth-wrapper.toggled .welcome-section.signin .slide-element { transform: translateX(120%); opacity: 0; }
+.welcome-section.signup .slide-element { transform: translateX(-120%); transition: .7s ease; opacity: 0; }
+.auth-wrapper.toggled .welcome-section.signup .slide-element { transform: translateX(0%); opacity: 1; }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
@@ -272,8 +266,5 @@ body {
     .auth-wrapper.toggled .credentials-panel.signin { display: none; }
     .auth-wrapper.toggled .credentials-panel.signup { display: flex; animation: fadeInUp 0.6s ease forwards; }
     
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 }

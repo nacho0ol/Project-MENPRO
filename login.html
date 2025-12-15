@@ -6,6 +6,7 @@
     <title>Masuk / Daftar - Olivia Meat</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <link rel="stylesheet" href="auth-style.css">
 </head>
 
@@ -16,16 +17,17 @@
         
         <div class="credentials-panel signin">
             <h2 class="slide-element">Login</h2>
-            <p class="slide-element" style="margin-bottom: 20px; font-size: 14px;">Selamat datang kembali di Olivia Meat!</p>
+            <p class="slide-element" style="margin-bottom: 20px; font-size: 14px; color:#ddd;">Selamat datang kembali di Olivia Meat!</p>
             
-            <form action="index.html"> <div class="field-wrapper slide-element">
-                    <input type="text" name="email" required>
-                    <label>Email / Username</label>
+            <form id="formLogin">
+                <div class="field-wrapper slide-element">
+                    <input type="text" id="emailUser" required>
+                    <label>Username / Email</label>
                     <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <input type="password" name="password" required>
+                    <input type="password" id="passUser" required>
                     <label>Password</label>
                     <i class="fa-solid fa-lock"></i>
                 </div>
@@ -47,23 +49,23 @@
 
         <div class="credentials-panel signup">
             <h2 class="slide-element">Register</h2>
-            <p class="slide-element" style="margin-bottom: 10px; font-size: 14px;">Buat akun untuk mulai belanja.</p>
+            <p class="slide-element" style="margin-bottom: 10px; font-size: 14px; color:#ddd;">Buat akun untuk mulai belanja.</p>
             
             <form action="#">
                 <div class="field-wrapper slide-element">
-                    <input type="text" name="username" required>
+                    <input type="text" required>
                     <label>Username</label>
                     <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <input type="email" name="email" required>
+                    <input type="email" required>
                     <label>Email</label>
                     <i class="fa-solid fa-envelope"></i>
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <input type="password" name="password" required>
+                    <input type="password" required>
                     <label>Password</label>
                     <i class="fa-solid fa-lock"></i>
                 </div>
@@ -94,6 +96,7 @@
         const loginTrigger = document.querySelector('.login-trigger');
         const registerTrigger = document.querySelector('.register-trigger');
 
+        // 1. Animasi Geser (Slider)
         registerTrigger.addEventListener('click', (e) => {
             e.preventDefault();
             authWrapper.classList.add('toggled');
@@ -102,6 +105,31 @@
         loginTrigger.addEventListener('click', (e) => {
             e.preventDefault();
             authWrapper.classList.remove('toggled');
+        });
+
+        // 2. Logika Login (Admin vs User)
+        const formLogin = document.getElementById('formLogin');
+
+        formLogin.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah reload halaman
+
+            const user = document.getElementById('emailUser').value;
+            const pass = document.getElementById('passUser').value;
+
+            // --- CEK APAKAH ADMIN? ---
+            if (user === 'admin' && pass === 'admin123') {
+                // Simpan sesi admin
+                localStorage.setItem('userRole', 'admin');
+                alert('Login Berhasil sebagai ADMIN!');
+                window.location.href = 'admin.html'; // Masuk Dashboard Admin
+            } 
+            // --- CEK APAKAH USER BIASA? ---
+            else {
+                // Simpan sesi customer
+                localStorage.setItem('userRole', 'customer');
+                alert('Login Berhasil! Selamat Datang.');
+                window.location.href = 'index.html'; // Masuk Toko (Landing Page)
+            }
         });
     </script>
 </body>
