@@ -1,0 +1,279 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* --- 1. SETTING WARNA SESUAI WEBSITE --- */
+:root {
+    /* Merah Marun (Sama dengan Hero Banner) */
+    --brand-red: #a00000; 
+    
+    /* Navy Gelap (Sama dengan Navbar/Text) */
+    --brand-navy: #24214B; 
+    
+    /* Background Halaman (Sama dengan Body Website) */
+    --bg-page: #f5f5f5;
+    
+    /* Warna Putih Teks */
+    --text-white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-white);
+}
+
+/* Background Halaman jadi TERANG (Putih/Abu) agar sama dengan Web */
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--bg-page); /* Ubah jadi terang */
+    padding: 20px;
+}
+
+.footer {
+    margin-top: 30px;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    color: var(--brand-navy); /* Footer text jadi gelap */
+}
+
+/* --- 2. KOTAK LOGIN (THEME HERO BANNER) --- */
+.auth-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    height: 550px;
+    
+    /* Background dasar kotak jadi MERAH (Seperti Hero Banner) */
+    background: var(--brand-red);
+    
+    /* Shadow halus agar terlihat timbul di background putih */
+    box-shadow: 0 20px 50px rgba(139, 0, 0, 0.3);
+    
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Layer konten (Form & Text) */
+.auth-wrapper .credentials-panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 2;
+}
+
+/* --- 3. ANIMASI SLIDER (WARNA NAVY) --- */
+/* Bentuk Miring yang bergerak */
+.auth-wrapper .background-shape {
+    position: absolute;
+    right: 0;
+    top: -5px;
+    height: 600px;
+    width: 850px;
+    
+    /* Gradient Navy (Sama dengan warna Navbar/Text Web) */
+    background: linear-gradient(45deg, var(--brand-navy), #1a1838);
+    
+    transform: rotate(10deg) skewY(40deg);
+    transform-origin: bottom right;
+    transition: 1.5s ease;
+    z-index: 0;
+    border-left: 2px solid rgba(255,255,255,0.1);
+}
+
+.auth-wrapper.toggled .background-shape {
+    transform: rotate(0deg) skewY(0deg);
+}
+
+.auth-wrapper .secondary-shape {
+    position: absolute;
+    left: 250px;
+    top: 100%;
+    height: 700px;
+    width: 850px;
+    background: var(--brand-navy); /* Navy */
+    border-top: 2px solid rgba(255,255,255,0.2);
+    transform: rotate(0deg) skewY(0deg);
+    transform-origin: bottom left;
+    transition: 1.5s ease;
+    z-index: 0;
+}
+
+.auth-wrapper.toggled .secondary-shape {
+    transform: rotate(-11deg) skewY(-41deg);
+}
+
+
+/* --- 4. STYLE TEXT & INPUT --- */
+.credentials-panel.signin { left: 0; padding: 0 40px; }
+.credentials-panel.signup { right: 0; padding: 0 60px; }
+
+/* Animasi Slide Element */
+.credentials-panel.signin .slide-element { transform: translateX(0%); transition: .7s; opacity: 1; }
+.auth-wrapper.toggled .credentials-panel.signin .slide-element { transform: translateX(-120%); opacity: 0; }
+
+.credentials-panel.signup .slide-element { transform: translateX(120%); transition: .7s ease; opacity: 0; filter: blur(10px); }
+.auth-wrapper.toggled .credentials-panel.signup .slide-element { transform: translateX(0%); opacity: 1; filter: blur(0px); }
+
+/* Delay Animations */
+.credentials-panel.signin .slide-element:nth-child(1) { transition-delay: 0.1s; }
+.credentials-panel.signin .slide-element:nth-child(2) { transition-delay: 0.2s; }
+.credentials-panel.signin .slide-element:nth-child(3) { transition-delay: 0.3s; }
+.credentials-panel.signin .slide-element:nth-child(4) { transition-delay: 0.4s; }
+
+.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(1) { transition-delay: 0.4s; }
+.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(2) { transition-delay: 0.5s; }
+.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(3) { transition-delay: 0.6s; }
+.auth-wrapper.toggled .credentials-panel.signup .slide-element:nth-child(4) { transition-delay: 0.7s; }
+
+/* Judul Login/Register */
+.credentials-panel h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-white);
+}
+
+/* Input Field */
+.credentials-panel .field-wrapper {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin-top: 25px;
+}
+
+.field-wrapper input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--text-white);
+    border-bottom: 2px solid rgba(255,255,255,0.4);
+    padding-right: 23px;
+    transition: .5s;
+}
+
+.field-wrapper input:focus,
+.field-wrapper input:valid {
+    border-bottom-color: var(--text-white); /* Garis jadi putih tegas saat aktif */
+}
+
+.field-wrapper label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    pointer-events: none;
+    transition: .5s;
+}
+
+.field-wrapper input:focus~label,
+.field-wrapper input:valid~label {
+    top: -5px;
+    color: var(--text-white);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.field-wrapper i {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.7);
+}
+
+/* --- 5. TOMBOL (BUTTON) --- */
+.submit-button {
+    position: relative;
+    width: 100%;
+    height: 45px;
+    background: var(--text-white); /* Tombol Putih */
+    color: var(--brand-red);       /* Teks Merah */
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    margin-top: 10px;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Link Ganti Login/Register */
+.switch-link {
+    font-size: 14px;
+    text-align: center;
+    margin: 30px 0 10px;
+}
+.switch-link a {
+    text-decoration: none;
+    color: var(--text-white);
+    font-weight: 700;
+    border-bottom: 1px dashed rgba(255,255,255,0.5);
+}
+.switch-link a:hover { border-bottom-style: solid; }
+
+/* --- 6. WELCOME SECTION (TEKS BESAR DI SAMPING) --- */
+.welcome-section {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1;
+}
+
+.welcome-section.signin { right: 0; text-align: right; padding: 0 40px 60px 100px; }
+.welcome-section.signup { left: 0; text-align: left; padding: 0 100px 60px 40px; pointer-events: none; }
+
+.welcome-section.signin .slide-element { transform: translateX(0); transition: .7s ease; opacity: 1; }
+.auth-wrapper.toggled .welcome-section.signin .slide-element { transform: translateX(120%); opacity: 0; }
+
+.welcome-section.signup .slide-element { transform: translateX(-120%); transition: .7s ease; opacity: 0; }
+.auth-wrapper.toggled .welcome-section.signup .slide-element { transform: translateX(0%); opacity: 1; }
+
+.welcome-section h2 {
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: rgba(255,255,255,0.2);
+    -webkit-text-stroke: 1px rgba(255,255,255,0.8); /* Outline text effect */
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .auth-wrapper { height: auto; min-height: 600px; flex-direction: column; }
+    .auth-wrapper .credentials-panel { width: 100%; position: relative; }
+    .credentials-panel.signin, .credentials-panel.signup { padding: 40px 30px; left: 0; right: 0; }
+    .welcome-section, .background-shape, .secondary-shape { display: none; }
+    
+    .credentials-panel.signup { display: none; }
+    .auth-wrapper.toggled .credentials-panel.signin { display: none; }
+    .auth-wrapper.toggled .credentials-panel.signup { display: flex; animation: fadeInUp 0.6s ease forwards; }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}

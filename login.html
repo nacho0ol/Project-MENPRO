@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk / Daftar - Olivia Meat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="auth-style.css">
+</head>
+
+<body>
+    <div class="auth-wrapper">
+        <div class="background-shape"></div>
+        <div class="secondary-shape"></div>
+        
+        <div class="credentials-panel signin">
+            <h2 class="slide-element">Login</h2>
+            <p class="slide-element" style="margin-bottom: 20px; font-size: 14px;">Selamat datang kembali di Olivia Meat!</p>
+            
+            <form action="index.html"> <div class="field-wrapper slide-element">
+                    <input type="text" name="email" required>
+                    <label>Email / Username</label>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="field-wrapper slide-element">
+                    <input type="password" name="password" required>
+                    <label>Password</label>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+
+                <div class="field-wrapper slide-element">
+                    <button class="submit-button" type="submit">Masuk Sekarang</button>
+                </div>
+
+                <div class="switch-link slide-element">
+                    <p>Belum punya akun? <br> <a href="#" class="register-trigger">Daftar Member Baru</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="welcome-section signin">
+            <h2 class="slide-element">OLIVIA<br>MEAT 'N FRESH</h2>
+            <p class="slide-element" style="margin-top: 10px;">Supplier daging sapi berkualitas & halal.</p>
+        </div>
+
+        <div class="credentials-panel signup">
+            <h2 class="slide-element">Register</h2>
+            <p class="slide-element" style="margin-bottom: 10px; font-size: 14px;">Buat akun untuk mulai belanja.</p>
+            
+            <form action="#">
+                <div class="field-wrapper slide-element">
+                    <input type="text" name="username" required>
+                    <label>Username</label>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="field-wrapper slide-element">
+                    <input type="email" name="email" required>
+                    <label>Email</label>
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+
+                <div class="field-wrapper slide-element">
+                    <input type="password" name="password" required>
+                    <label>Password</label>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+
+                <div class="field-wrapper slide-element">
+                    <button class="submit-button" type="submit">Daftar Sekarang</button>
+                </div>
+
+                <div class="switch-link slide-element">
+                    <p>Sudah punya akun? <br> <a href="#" class="login-trigger">Login Disini</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="welcome-section signup">
+            <h2 class="slide-element">GABUNG<br>SEKARANG!</h2>
+            <p class="slide-element" style="margin-top: 10px;">Dapatkan promo menarik dan gratis ongkir.</p>
+        </div>
+
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2024 Olivia Meat 'n Fresh</p>
+    </div>
+
+    <script>
+        const authWrapper = document.querySelector('.auth-wrapper');
+        const loginTrigger = document.querySelector('.login-trigger');
+        const registerTrigger = document.querySelector('.register-trigger');
+
+        registerTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            authWrapper.classList.add('toggled');
+        });
+
+        loginTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            authWrapper.classList.remove('toggled');
+        });
+    </script>
+</body>
+</html>
