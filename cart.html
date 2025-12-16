@@ -1,96 +1,144 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keranjang - Olivia Meat</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+</head>
+<body>
     <nav class="navbar">
       <div class="container nav-content">
-        <a href="index.html" class="logo">
-          <img src="logo.png" alt="Olivia Meat Logo" style="height: 50px;">
-        </a>
-        
+        <a href="index.html" class="logo"><img src="logo.png" alt="Logo"><span>Olivia Meat</span></a>
         <div class="nav-links">
           <a href="index.html#katalog">Produk</a>
           <a href="index.html#tentang">Tentang Kami</a>
-          <a href="index.html#kontak">Kontak Kami</a>
+          <a href="#footer-area">Kontak Kami</a>
         </div>
-
         <div class="nav-icons">
           <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
           <a href="profile.html"><i class="fas fa-user"></i></a>
+          <a href="login.html" class="logout-btn" onclick="return confirm('Yakin ingin keluar?')"><i class="fas fa-sign-out-alt"></i> Keluar</a>
         </div>
       </div>
     </nav>
 
-    <div class="container cart-wrapper">
-      <div class="cart-list">
-        <h3>Keranjang Belanja</h3>
+    <div class="container cart-page">
+        <div class="cart-title-wrapper">
+            <h2>Keranjang Belanja</h2>
+            <span style="color: #666;" id="totalItems">0 Item</span>
+        </div>
 
-        <div class="cart-item">
-          <img
-            src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=100&q=60"
-            style="
-              width: 80px;
-              height: 80px;
-              object-fit: cover;
-              border-radius: 5px;
-            "
-          />
-          <div style="flex: 1">
-            <div style="font-weight: 600">Sirloin Premium</div>
-            <div style="color: var(--primary-red)">Rp 140.000</div>
-          </div>
-          <div class="qty-selector">
-            <div class="qty-btn">-</div>
-            <div class="qty-val">1</div>
-            <div class="qty-btn">+</div>
-          </div>
-          <div style="font-weight: 700">Rp 140.000</div>
-          <i class="fas fa-trash" style="color: #999; cursor: pointer"></i>
-        </div>
-      </div>
+        <div class="cart-grid">
+            <div class="cart-items" id="cartContainer">
+                <p>Memuat keranjang...</p>
+            </div>
 
-      <div class="cart-summary">
-        <h3>Ringkasan</h3>
-        <br />
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-          "
-        >
-          <span>Subtotal</span>
-          <span>Rp 140.000</span>
+            <div class="cart-summary">
+                <h3>Ringkasan Pesanan</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="subTotal">Rp 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Biaya Layanan</span>
+                    <span>Rp 2.000</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Tagihan</span>
+                    <span id="finalTotal">Rp 0</span>
+                </div>
+                <button onclick="hapusSemua()" style="width:100%; padding:10px; border:none; background:#eee; cursor:pointer; margin-top:10px; border-radius:5px; color:#ff4d4d;">Hapus Semua</button>
+                <a href="checkout.html" class="btn-checkout"><i class="fas fa-lock"></i> Checkout Sekarang</a>
+            </div>
         </div>
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: 700;
-            font-size: 18px;
-          "
-        >
-          <span>Total</span>
-          <span>Rp 140.000</span>
-        </div>
-        
-        <button class="btn-checkout" onclick="window.location.href='checkout.html'">Checkout</button>
-        
-      </div>
     </div>
-  </body>
+
+    <script>
+        // 1. Ambil Data
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const container = document.getElementById('cartContainer');
+        const totalItemsLabel = document.getElementById('totalItems');
+        const subTotalLabel = document.getElementById('subTotal');
+        const finalTotalLabel = document.getElementById('finalTotal');
+
+        // 2. Fungsi Render (Tampilkan Barang)
+        function renderCart() {
+            container.innerHTML = ''; 
+            let subTotal = 0;
+            let totalQty = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:20px;">Keranjang kosong. Yuk belanja dulu! 🥩</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    let itemTotal = item.price * item.qty;
+                    subTotal += itemTotal;
+                    totalQty += item.qty;
+
+                    // DI SINI PERUBAHANNYA: Ada tombol (-) dan (+)
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <div class="cart-img">
+                                <img src="${item.img}" alt="${item.name}">
+                            </div>
+                            <div class="cart-details">
+                                <h4>${item.name}</h4>
+                                <p class="price">Rp ${parseInt(item.price).toLocaleString('id-ID')}</p>
+                            </div>
+                            
+                            <div class="qty-box" style="margin: 0;">
+                                <div class="qty-btn" onclick="ubahQty(${index}, -1)">-</div>
+                                <div class="qty-val">${item.qty}</div>
+                                <div class="qty-btn" onclick="ubahQty(${index}, 1)">+</div>
+                            </div>
+
+                            <button class="btn-remove" onclick="hapusItem(${index})" title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                });
+            }
+
+            // Update Total
+            totalItemsLabel.innerText = totalQty + ' Item';
+            subTotalLabel.innerText = 'Rp ' + subTotal.toLocaleString('id-ID');
+            finalTotalLabel.innerText = 'Rp ' + (subTotal + 2000).toLocaleString('id-ID');
+        }
+
+        // 3. Fungsi Ubah Jumlah (+ / -)
+        function ubahQty(index, change) {
+            // Jika jumlah 1 dan dikurang, jangan jadi 0 (tetap 1). Gunakan tombol sampah jika mau hapus.
+            if (cart[index].qty === 1 && change === -1) {
+                return; 
+            }
+            
+            cart[index].qty += change;
+            localStorage.setItem('cart', JSON.stringify(cart)); // Simpan
+            renderCart(); // Tampilkan ulang
+        }
+
+        // 4. Fungsi Hapus Per Item
+        function hapusItem(index) {
+            if(confirm("Hapus produk ini dari keranjang?")) {
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        // 5. Fungsi Hapus Semua
+        function hapusSemua() {
+            if(cart.length > 0 && confirm("Yakin mau kosongkan keranjang?")) {
+                localStorage.removeItem('cart');
+                cart = [];
+                renderCart();
+            }
+        }
+
+        // Jalankan saat pertama buka
+        renderCart();
+    </script>
+</body>
 </html>
