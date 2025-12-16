@@ -51,7 +51,9 @@
                     <span id="finalTotal">Rp 0</span>
                 </div>
                 <button onclick="hapusSemua()" style="width:100%; padding:10px; border:none; background:#eee; cursor:pointer; margin-top:10px; border-radius:5px; color:#ff4d4d;">Hapus Semua</button>
-                <a href="checkout.html" class="btn-checkout"><i class="fas fa-lock"></i> Checkout Sekarang</a>
+                <button onclick="cekCheckout()" class="btn-checkout">
+                    <i class="fas fa-lock"></i> Checkout Sekarang
+                </button>
             </div>
         </div>
     </div>
@@ -78,7 +80,7 @@
                     subTotal += itemTotal;
                     totalQty += item.qty;
 
-                    // DI SINI PERUBAHANNYA: Ada tombol (-) dan (+)
+                    // Tampilkan item dengan tombol +/-
                     container.innerHTML += `
                         <div class="cart-item">
                             <div class="cart-img">
@@ -109,7 +111,7 @@
 
         // 3. Fungsi Ubah Jumlah (+ / -)
         function ubahQty(index, change) {
-            // Jika jumlah 1 dan dikurang, jangan jadi 0 (tetap 1). Gunakan tombol sampah jika mau hapus.
+            // Jika jumlah 1 dan dikurang, jangan jadi 0 (tetap 1)
             if (cart[index].qty === 1 && change === -1) {
                 return; 
             }
@@ -134,6 +136,15 @@
                 localStorage.removeItem('cart');
                 cart = [];
                 renderCart();
+            }
+        }
+
+        // 6. Fungsi Cek Checkout (Sudah dimasukkan ke dalam script)
+        function cekCheckout() {
+            if (cart.length === 0) {
+                alert("Keranjang masih kosong, nih! Pilih daging dulu ya. 🥩");
+            } else {
+                window.location.href = 'checkout.html';
             }
         }
 

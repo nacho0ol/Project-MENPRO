@@ -4,168 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Olivia Meat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="checkout-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* CSS SAMA SEPERTI SEBELUMNYA (TIDAK BERUBAH) */
+        body { background-color: #fff; overflow-x: hidden; font-family: 'Poppins', sans-serif; }
+        .navbar-checkout { background-color: var(--primary-red); padding: 15px 0; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; z-index: 100; }
+        .checkout-wrapper { display: flex; min-height: calc(100vh - 70px); }
+        .left-panel { flex: 1.3; background: #fff; padding: 40px 5%; border-right: 1px solid #e1e1e1; display: flex; flex-direction: column; align-items: center; }
+        .form-container { width: 100%; max-width: 520px; text-align: left; }
+        .breadcrumb { font-size: 0.85rem; margin-bottom: 25px; color: #666; text-align: left; }
+        .breadcrumb a { color: var(--primary-red); text-decoration: none; }
+        .breadcrumb span { margin: 0 5px; color: #ccc; }
+        .breadcrumb .current { font-weight: 600; color: #333; }
+        .section-title { font-size: 1.1rem; font-weight: 600; color: #333; margin-bottom: 15px; text-align: left; display: block; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-label { display: block; font-size: 0.85rem; color: #666; margin-bottom: 5px; text-align: left; }
+        .form-input { width: 100%; padding: 12px 15px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 0.95rem; outline: none; transition: 0.2s; background: #fff; }
+        .form-input:focus { border-color: var(--primary-red); box-shadow: 0 0 0 1px var(--primary-red); }
+        .payment-box { border: 1px solid #d9d9d9; border-radius: 6px; overflow: hidden; margin-top: 10px; }
+        .payment-option { padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; border-bottom: 1px solid #eee; background: #fff; transition: 0.2s; text-align: left; }
+        .payment-option:last-child { border-bottom: none; }
+        .payment-option:hover { background: #f9f9f9; }
+        .payment-option input { accent-color: var(--primary-red); transform: scale(1.1); }
+        .pay-info strong { display: block; font-size: 0.95rem; color: #333; }
+        .pay-info small { font-size: 0.8rem; color: #777; }
+        .form-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+        .back-link { text-decoration: none; color: var(--primary-red); font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .btn-order { background-color: #8b0000; color: white; padding: 14px 25px; border: none; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn-order:hover { background-color: #a50000; }
+        .right-panel { flex: 1; background: #fafafa; border-left: 1px solid #e1e1e1; padding: 40px 5%; }
+        .summary-inner { max-width: 400px; margin: 0; }
+        .order-card { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .img-wrap { position: relative; width: 64px; height: 64px; border: 1px solid #e1e1e1; border-radius: 8px; background: #fff; padding: 2px; }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+        .qty-badge { position: absolute; top: -8px; right: -8px; background: #777; color: white; font-size: 0.75rem; width: 20px; height: 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .item-text h4 { font-size: 0.95rem; color: #333; margin-bottom: 2px; }
+        .item-text p { font-size: 0.85rem; color: #777; }
+        .item-price { margin-left: auto; font-weight: 600; font-size: 0.95rem; color: #333; }
+        .price-line { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #555; }
+        .total-line { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e1e1e1; align-items: center; }
+        .total-label { font-size: 1.1rem; color: #333; }
+        .total-val { font-size: 1.3rem; font-weight: 700; color: #333; }
+        .currency { font-size: 0.8rem; color: #777; margin-right: 5px; font-weight: 400; }
+        @media (max-width: 900px) { .checkout-wrapper { flex-direction: column-reverse; } .left-panel, .right-panel { border: none; padding: 30px 20px; } .right-panel { border-bottom: 1px solid #e1e1e1; } }
+    </style>
 </head>
 <body>
 
-    <div class="checkout-container">
-        <div class="left-section">
-            
-            <div class="header-logo">
-                <a href="index.html"><i class="fas fa-cow"></i> Olivia Meat</a>
-            </div>
+    <nav class="navbar-checkout">
+        <div class="container nav-content" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <a href="index.html" style="color: white; font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img src="logo.png" alt="Logo" style="height: 35px; background: white; border-radius: 50%; padding: 2px;">
+                <span>Olivia Meat</span>
+            </a>
+            <a href="cart.html" style="color: white; text-decoration: none; font-size: 0.9rem;">
+                <i class="fas fa-shopping-basket"></i> Kembali ke Keranjang
+            </a>
+        </div>
+    </nav>
 
-            <div class="breadcrumb">
-                <a href="cart.html" class="active-link">Cart</a> 
-                <i class="fas fa-chevron-right"></i>
-                <span class="current">Payment</span>
-            </div>
+    <div class="checkout-wrapper">
+        <div class="left-panel">
+            <div class="form-container">
+                <div class="breadcrumb">
+                    <a href="cart.html">Cart</a>
+                    <span><i class="fas fa-chevron-right" style="font-size: 10px;"></i></span>
+                    <span class="current">Payment</span>
+                </div>
 
-            <div class="section-box">
-                <h2 class="title-text">Data Pemesan</h2>
-                <form id="checkoutForm">
-                    <div class="input-group">
-                        <label>Nama Lengkap (Contact)</label>
-                        <input type="text" id="customerName" placeholder="Masukkan nama Anda" required>
+                <form id="checkoutForm" onsubmit="kirimPesanan(event)">
+                    <div class="section-title">Data Pemesan</div>
+                    <div class="form-group"><label class="form-label">Nama Lengkap (Contact)</label><input type="text" id="nama" class="form-input" placeholder="Masukkan nama Anda" required></div>
+                    <div class="form-group"><label class="form-label">Nomor Telepon / WhatsApp (Ship to)</label><input type="tel" id="wa" class="form-input" placeholder="08xxxxxxxxxx" required></div>
+                    <div class="form-group"><label class="form-label">Alamat Pengiriman</label><textarea id="alamat" class="form-input" placeholder="Alamat lengkap, patokan, dll" style="min-height: 80px;" required></textarea></div>
+                    <div class="form-group"><input type="checkbox" id="saveInfo"><label for="saveInfo" style="font-size: 0.85rem; color: #666; cursor: pointer;"> Simpan informasi ini</label></div>
+                    <br>
+                    <div class="section-title">Metode Pembayaran</div>
+                    <div class="payment-box">
+                        <label class="payment-option"><input type="radio" name="payment" value="Transfer Bank" checked><div class="pay-info"><strong>Transfer Bank</strong><small>BCA / Mandiri / BRI</small></div></label>
+                        <label class="payment-option"><input type="radio" name="payment" value="COD"><div class="pay-info"><strong>COD</strong><small>Bayar tunai saat kurir sampai</small></div></label>
                     </div>
-
-                    <div class="input-group">
-                        <label>Nomor Telepon / WhatsApp (Ship to)</label>
-                        <input type="tel" id="customerPhone" placeholder="08xxxxxxxxxx" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Alamat Pengiriman</label>
-                        <textarea id="customerAddress" rows="2" placeholder="Alamat lengkap, patokan, dll" required></textarea>
-                    </div>
-
-                    <div class="checkbox-wrapper">
-                        <input type="checkbox" id="saveInfo">
-                        <label for="saveInfo">Simpan informasi ini untuk pembelian berikutnya</label>
-                    </div>
+                    <div class="form-actions"><a href="cart.html" class="back-link"><i class="fas fa-chevron-left"></i> Back to Cart</a><button type="submit" class="btn-order">Order Now</button></div>
                 </form>
             </div>
-
-            <div class="section-box" style="margin-top: 30px;">
-                <h2 class="title-text">Payment Method</h2>
-                <div class="payment-options">
-                    <label class="payment-card">
-                        <div class="radio-col">
-                            <input type="radio" name="payment" value="Transfer Bank" checked>
-                        </div>
-                        <div class="info-col">
-                            <span class="pay-title">Transfer Bank</span>
-                            <span class="pay-desc">BCA / Mandiri / BRI</span>
-                        </div>
-                    </label>
-
-                    <label class="payment-card">
-                        <div class="radio-col">
-                            <input type="radio" name="payment" value="COD (Bayar di Tempat)">
-                        </div>
-                        <div class="info-col">
-                            <span class="pay-title">COD</span>
-                            <span class="pay-desc">Bayar tunai saat kurir sampai</span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <div class="action-footer">
-                <a href="cart.html" class="back-link">&lt; Back to Cart</a>
-                <button type="button" class="btn-order" onclick="kirimKeWA()">Order Now</button>
-            </div>
-            
-            <div class="footer-note">&copy; 2012 Olivia Meat 'n Fresh</div>
         </div>
 
-
-        <div class="right-section">
-            <div class="order-item">
-                <div class="img-badge-wrapper">
-                    <img src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=200&q=60" alt="Daging">
-                    <span class="qty-badge">1</span>
+        <div class="right-panel">
+            <div class="summary-inner">
+                <div id="itemList"></div>
+                <div style="border-top: 1px solid #e1e1e1; padding-top: 20px; margin-top: 20px;">
+                    <div class="price-line"><span>Subtotal</span><span id="subTotal" style="font-weight: 500; color: #333;">Rp 0</span></div>
+                    <div class="price-line"><span>Shipping</span><span style="font-weight: 500; color: #2ecc71;">Gratis</span></div>
+                    <div class="price-line"><span>Biaya Layanan</span><span style="font-weight: 500; color: #333;">Rp 2.000</span></div>
                 </div>
-                <div class="item-text">
-                    <div class="item-title">Sirloin Premium Import</div>
-                    <div class="item-var">Pack 500gr</div>
-                </div>
-                <div class="item-price">Rp 140.000</div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="voucher-box">
-                <input type="text" placeholder="Coupon code">
-                <button>Apply</button>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="price-row">
-                <span>Subtotal</span>
-                <span>Rp 140.000</span>
-            </div>
-            <div class="price-row">
-                <span>Shipping</span>
-                <span style="font-size: 12px;">Dihitung via WhatsApp</span>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="price-row total">
-                <span>Total</span>
-                <span class="total-nominal">Rp 140.000</span>
+                <div class="total-line"><span class="total-label">Total</span><span class="total-val"><span class="currency">IDR</span> <span id="finalTotal">Rp 0</span></span></div>
             </div>
         </div>
     </div>
 
     <script>
-        function kirimKeWA() {
-            var nama = document.getElementById("customerName").value;
-            var telepon = document.getElementById("customerPhone").value;
-            var alamat = document.getElementById("customerAddress").value;
-            
-            var metodeBayarElement = document.querySelector('input[name="payment"]:checked');
-            var metodeBayar = metodeBayarElement ? metodeBayarElement.value : "-";
+        // 1. Load Cart
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) { window.location.href = 'index.html'; }
 
-            if (nama === "" || telepon === "" || alamat === "") {
-                alert("Mohon lengkapi Nama, Nomor Telepon, dan Alamat pengiriman.");
-                return;
-            }
+        const itemList = document.getElementById('itemList');
+        let subTotal = 0;
 
-            // Ambil Produk Otomatis dari Tampilan Kanan
-            var listProduk = "";
-            var items = document.querySelectorAll('.order-item');
-            
-            items.forEach(function(item) {
-                var namaProduk = item.querySelector('.item-title').innerText;
-                var varian = item.querySelector('.item-var').innerText;
-                var qty = item.querySelector('.qty-badge').innerText;
-                
-                listProduk += "📦 " + namaProduk + " (" + varian + ") - Qty: " + qty + "\n";
-            });
+        cart.forEach(item => {
+            let itemTotal = item.price * item.qty;
+            subTotal += itemTotal;
+            itemList.innerHTML += `
+                <div class="order-card">
+                    <div class="img-wrap"><img src="${item.img}" alt="${item.name}"><div class="qty-badge">${item.qty}</div></div>
+                    <div class="item-text"><h4>${item.name}</h4><p>Pack 500gr</p></div>
+                    <div class="item-price">Rp ${itemTotal.toLocaleString('id-ID')}</div>
+                </div>`;
+        });
 
-            var totalHarga = document.querySelector('.total-nominal').innerText;
+        const finalTotal = subTotal + 2000;
+        document.getElementById('subTotal').innerText = 'Rp ' + subTotal.toLocaleString('id-ID');
+        document.getElementById('finalTotal').innerText = 'Rp ' + finalTotal.toLocaleString('id-ID');
 
-            var pesan = 
-                "*Halo Admin Olivia Meat, saya mau pesan!* 🥩\n\n" +
-                "*DATA PEMESAN:*\n" +
-                "👤 Nama: " + nama + "\n" +
-                "📱 No. HP: " + telepon + "\n" +
-                "🏠 Alamat: " + alamat + "\n\n" +
-                "*DETAIL PESANAN:*\n" +
-                listProduk + "\n" +
-                "💰 *TOTAL BAYAR: " + totalHarga + "*\n" +
-                "💳 Metode: " + metodeBayar + "\n\n" +
-                "Mohon diproses, terima kasih!";
+        // 2. LOGIKA BARU: Simpan Order & Kirim WA
+        function kirimPesanan(e) {
+            e.preventDefault();
+            const nama = document.getElementById('nama').value;
+            const wa = document.getElementById('wa').value;
+            const alamat = document.getElementById('alamat').value;
+            const payment = document.querySelector('input[name="payment"]:checked').value;
 
-            // Nomor Tujuan
-            var nomorToko = "6285225705041"; 
-            var linkWA = "https://wa.me/" + nomorToko + "?text=" + encodeURIComponent(pesan);
-            window.open(linkWA, '_blank');
+            // A. BUAT DATA ORDER UNTUK DISIMPAN KE HISTORY
+            const newOrder = {
+                id: 'ORD-' + Date.now().toString().slice(-6), // ID Unik
+                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                items: cart, // Simpan barang yg dibeli
+                total: finalTotal,
+                status: 'Menunggu Konfirmasi', // Status awal
+                payment: payment
+            };
+
+            // B. AMBIL HISTORY LAMA & GABUNGKAN
+            let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+            orderHistory.unshift(newOrder); // Masukkan ke paling atas
+            localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+
+            // C. HAPUS KERANJANG (Karena sudah dibeli)
+            localStorage.removeItem('cart');
+
+            // D. KIRIM KE WA
+            let message = `Halo Admin Olivia Meat!%0A%0APesanan Baru (${newOrder.id}):%0A`;
+            cart.forEach(item => { message += `${item.qty}x ${item.name}%0A`; });
+            message += `%0A*Total: Rp ${finalTotal.toLocaleString('id-ID')}*%0A`;
+            message += `------------------%0A`;
+            message += `Nama: ${nama}%0AHP: ${wa}%0AAlamat: ${alamat}%0APembayaran: ${payment}`;
+
+            // E. BUKA WA & REDIRECT KE PROFILE (HISTORY)
+            window.open(`https://wa.me/6282136656877?text=${message}`, '_blank');
+            window.location.href = 'profile.html'; // Pindah ke halaman history
         }
     </script>
 </body>

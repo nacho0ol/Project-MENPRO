@@ -1,71 +1,96 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Produk - Olivia Meat</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+</head>
+<body>
     <nav class="navbar">
       <div class="container nav-content">
-        <a href="index.html" class="logo"
-          ><i class="fas fa-cow"></i> Olivia Meat</a
-        >
+        <a href="index.html" class="logo"><img src="logo.png" alt="Logo"><span>Olivia Meat</span></a>
+        <div class="nav-links">
+          <a href="index.html#katalog">Produk</a>
+          <a href="index.html#tentang">Tentang Kami</a>
+          <a href="#footer-area">Kontak Kami</a>
+        </div>
         <div class="nav-icons">
           <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
           <a href="profile.html"><i class="fas fa-user"></i></a>
+          <a href="login.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Keluar</a>
         </div>
       </div>
     </nav>
 
-    <div class="container">
-      <div class="detail-container">
-        <div>
-          <img
-            src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80"
-            style="width: 100%; border-radius: 10px"
-          />
+    <div class="container detail-section">
+        <a href="index.html#katalog" style="display: inline-block; margin-bottom: 20px; color: #666;"><i class="fas fa-arrow-left"></i> Kembali ke Katalog</a>
+        <div class="detail-wrapper">
+            <div class="detail-img">
+                <img id="imgProduk" src="" alt="Produk" />
+            </div>
+            <div class="detail-info">
+                <h1 id="namaProduk">Loading...</h1>
+                <span class="product-price" id="hargaProduk">Rp 0 <small>/ pack</small></span>
+                <div class="po-badge"><i class="fas fa-clock"></i> Sistem Pre-Order (PO)</div>
+                <p class="product-desc">
+                    Daging sapi segar kualitas premium dengan sertifikasi halal. 
+                    Dikemas higienis dan dikirim dalam keadaan beku untuk menjaga kualitas.
+                </p>
+                <div style="margin-bottom: 10px; font-weight: 600;">Jumlah Pesanan:</div>
+                <div class="qty-box">
+                    <div class="qty-btn" onclick="kurang()">-</div>
+                    <div class="qty-val" id="angka">1</div>
+                    <div class="qty-btn" onclick="tambah()">+</div>
+                </div>
+                <button class="btn-full-cart" onclick="addToCart()">
+                    <i class="fas fa-cart-plus"></i> Masukkan Keranjang
+                </button>
+            </div>
         </div>
-
-        <div>
-          <h1 style="margin-bottom: 10px">Sirloin Premium</h1>
-
-          <h2 style="color: var(--primary-red); margin-bottom: 20px">
-            Rp 140.000 <span style="font-size: 14px; color: #666">/ pack</span>
-          </h2>
-
-          <p style="color: #666; margin-bottom: 20px; line-height: 1.6">
-            Potongan daging has luar yang memiliki tekstur lembut dengan sedikit
-            lemak di pinggiran (fat cap). Cocok untuk steak.
-          </p>
-          
-          <div style="margin-bottom: 20px; font-size: 14px; color: #e67e22; font-weight:600;">
-             <i class="fas fa-clock"></i> Sistem Pre-Order (PO)
-          </div>
-
-          <div class="qty-selector">
-            <div class="qty-btn">-</div>
-            <div class="qty-val">1</div>
-            <div class="qty-btn">+</div>
-          </div>
-
-          <button
-            class="btn-add-cart"
-            onclick="window.location.href='cart.html'"
-          >
-            <i class="fas fa-cart-plus"></i> Add to Cart
-          </button>
-        </div>
-      </div>
     </div>
-  </body>
+
+    <script>
+        // 1. Tangkap Data dari Link URL (index.html)
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name') || 'Sirloin Premium'; // Default kalo ga ada data
+        const price = params.get('price') || '140000';
+        const img = params.get('img') || 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80';
+
+        // 2. Tampilkan Data ke Layar
+        document.getElementById('namaProduk').innerText = name;
+        document.getElementById('hargaProduk').innerHTML = 'Rp ' + parseInt(price).toLocaleString('id-ID');
+        document.getElementById('imgProduk').src = img;
+
+        // 3. Logic Tambah Kurang Jumlah
+        let qty = 1;
+        const display = document.getElementById('angka');
+        function tambah() { qty++; display.innerText = qty; }
+        function kurang() { if (qty > 1) { qty--; display.innerText = qty; } }
+
+        // 4. Logic Masukkan ke Keranjang (LocalStorage)
+        function addToCart() {
+            // Ambil data keranjang lama (kalau ada)
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Cek apakah produk sudah ada di cart?
+            let existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.qty += qty; // Kalau ada, tambah jumlahnya aja
+            } else {
+                // Kalau belum ada, masukkan sebagai item baru
+                cart.push({ name: name, price: price, img: img, qty: qty });
+            }
+
+            // Simpan balik ke LocalStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            alert('Berhasil masuk keranjang! 🛒');
+            window.location.href = 'cart.html'; // Pindah ke halaman cart
+        }
+    </script>
+</body>
 </html>
