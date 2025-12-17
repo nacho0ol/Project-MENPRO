@@ -146,3 +146,46 @@ tbody td { padding: 1rem; color: #222; font-size: 14px; }
     .main-content { margin-left: 70px; }
     .user-wrapper h4, .user-wrapper small { display: none; }
 }
+
+/* --- MODAL POPUP STYLES (NEW) --- */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    z-index: 1000; /* Sit on top */
+    left: 0; top: 0;
+    width: 100%; height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 5% from top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%; /* Width of modal */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: var(--brand-red);
+    text-decoration: none;
+    cursor: pointer;
+}

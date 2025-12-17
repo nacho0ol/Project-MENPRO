@@ -51,21 +51,21 @@
             <h2 class="slide-element">Register</h2>
             <p class="slide-element" style="margin-bottom: 10px; font-size: 14px; color:#ddd;">Buat akun untuk mulai belanja.</p>
             
-            <form action="#">
+            <form id="formRegister">
                 <div class="field-wrapper slide-element">
-                    <input type="text" required>
+                    <input type="text" id="regUsername" required>
                     <label>Username</label>
                     <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <input type="email" required>
+                    <input type="email" id="regEmail" required>
                     <label>Email</label>
                     <i class="fa-solid fa-envelope"></i>
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <input type="password" required>
+                    <input type="password" id="regPassword" required>
                     <label>Password</label>
                     <i class="fa-solid fa-lock"></i>
                 </div>
@@ -107,28 +107,93 @@
             authWrapper.classList.remove('toggled');
         });
 
-        // 2. Logika Login (Admin vs User)
+        // 2. Logika Register
+        const formRegister = document.getElementById('formRegister');
+
+        formRegister.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (password.length < 6) {
+                alert('Password minimal 6 karakter');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Registrasi Berhasil! Silakan login.');
+                    authWrapper.classList.remove('toggled');
+                    document.getElementById('formRegister').reset();
+                } else {
+                    alert('Registrasi Gagal: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat registrasi');
+            }
+        });
+
+        // 2. Logika Login (Hubung ke Backend)
         const formLogin = document.getElementById('formLogin');
 
-        formLogin.addEventListener('submit', function(e) {
+        formLogin.addEventListener('submit', async function(e) {
             e.preventDefault(); // Mencegah reload halaman
 
             const user = document.getElementById('emailUser').value;
             const pass = document.getElementById('passUser').value;
 
-            // --- CEK APAKAH ADMIN? ---
-            if (user === 'admin' && pass === 'admin123') {
-                // Simpan sesi admin
-                localStorage.setItem('userRole', 'admin');
-                alert('Login Berhasil sebagai ADMIN!');
-                window.location.href = 'admin.html'; // Masuk Dashboard Admin
-            } 
-            // --- CEK APAKAH USER BIASA? ---
-            else {
-                // Simpan sesi customer
-                localStorage.setItem('userRole', 'customer');
-                alert('Login Berhasil! Selamat Datang.');
-                window.location.href = 'index.html'; // Masuk Toko (Landing Page)
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: user,
+                        password: pass
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Simpan session di localStorage
+                    localStorage.setItem('userRole', result.data.role);
+                    localStorage.setItem('username', result.data.username);
+                    localStorage.setItem('userId', result.data.idUser);
+                    localStorage.setItem('email', result.data.email);
+
+                    alert('Login Berhasil!');
+
+                    // Redirect berdasarkan role
+                    if (result.data.role === 'Admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert('Login Gagal: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat login');
             }
         });
     </script>

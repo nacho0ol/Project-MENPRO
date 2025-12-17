@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Olivia Meat</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-cow"></i> <span>Olivia Admin</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="#"><i class="fas fa-box"></i> <span>Kelola Produk</span></a></li>
+            <li><a href="#"><i class="fas fa-shopping-bag"></i> <span>Riwayat Pesanan</span></a></li>
+            <li><a href="#"><i class="fas fa-users"></i> <span>Data Pelanggan</span></a></li>
+            
+            <li class="logout">
+                <a href="#" onclick="logoutAdmin()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        
+        <header>
+            <h2>Dashboard Overview</h2>
+            <div class="user-wrapper">
+                <img src="logo.png" width="40px" height="40px" style="border-radius: 50%; object-fit: cover;" alt="Admin">
+                <div>
+                    <h4>Ananda Julia</h4>
+                    <small>Super Admin</small>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="card-section">
+                <div class="card-header">
+                    <h3>Daftar Produk & Stok</h3>
+                    <button class="btn-add"><i class="fas fa-plus"></i> Tambah Produk</button>
+                </div>
+                <div class="card-body">
+                    <table width="100%" class="products-table">
+                        <thead>
+                            <tr>
+                                <td>Foto</td>
+                                <td>Nama Produk</td>
+                                <td>Harga</td>
+                                <td>Stok (Kg/Pack)</td>
+                                <td>Kelola Stok</td>
+                                <td>Aksi</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-section" style="margin-top: 30px;">
+                <div class="card-header">
+                    <h3>Riwayat Pesanan Masuk</h3>
+                </div>
+                <div class="card-body">
+                    <table width="100%" class="orders-table">
+                        <thead>
+                            <tr>
+                                <td>ID Order</td>
+                                <td>Nama Pelanggan</td>
+                                <td>Total</td>
+                                <td>Status</td>
+                                <td>Ubah Status</td>
+                                <td>Detail</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-section" style="margin-top: 30px;">
+                <div class="card-header">
+                    <h3>Data Pelanggan</h3>
+                </div>
+                <div class="card-body">
+                    <table width="100%" class="customers-table">
+                        <thead>
+                            <tr>
+                                <td>Nama</td>
+                                <td>Email</td>
+                                <td>No. HP</td>
+                                <td>Alamat</td>
+                                <td>Aksi</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modal-body">
+                </div>
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
+                <button onclick="closeModal()" class="btn-action delete" style="padding: 8px 20px;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

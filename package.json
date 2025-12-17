@@ -1,16 +1,24 @@
 {
   "name": "project-menpro",
   "version": "1.0.0",
-  "description": "",
-  "main": "generatehash.js",
+  "description": "Sistem e-commerce untuk penjualan produk makanan/minuman",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nacho0ol/Project-MENPRO.git"
   },
-  "keywords": [],
+  "keywords": [
+    "ecommerce",
+    "food",
+    "drinks",
+    "express",
+    "mysql"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -24,5 +32,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "mysql2": "^3.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }

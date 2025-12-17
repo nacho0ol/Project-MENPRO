@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Project MENPRO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.85em;
+        }
+
+        .get { background: #61affe; }
+        .post { background: #49cc90; }
+        .put { background: #fca130; }
+        .delete { background: #f93e3e; }
+
+        .path {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .desc {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.95em;
+        }
+
+        .access {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Project MENPRO</h1>
+            <p>E-Commerce API Documentation</p>
+        </header>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>📌 Base URL:</strong> http://localhost:3000/api
+            </div>
+
+            <!-- Authentication Section -->
+            <div class="section">
+                <h2>🔐 Authentication</h2>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/auth/register</span>
+                    </div>
+                    <div class="desc">Register user baru</div>
+                    <div class="access">Access: Public</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/auth/login</span>
+                    </div>
+                    <div class="desc">Login user dengan email dan password</div>
+                    <div class="access">Access: Public</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/auth/logout</span>
+                    </div>
+                    <div class="desc">Logout user</div>
+                    <div class="access">Access: Public</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/auth/profile</span>
+                    </div>
+                    <div class="desc">Get profile user yang login</div>
+                    <div class="access">Access: Private</div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="section">
+                <h2>📦 Products</h2>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/products</span>
+                    </div>
+                    <div class="desc">Get semua produk aktif</div>
+                    <div class="access">Access: Public</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/products/:id</span>
+                    </div>
+                    <div class="desc">Get detail produk berdasarkan ID</div>
+                    <div class="access">Access: Public</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/products</span>
+                    </div>
+                    <div class="desc">Create produk baru</div>
+                    <div class="access">Access: Private (Admin Only)</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method put">PUT</span>
+                        <span class="path">/products/:id</span>
+                    </div>
+                    <div class="desc">Update produk</div>
+                    <div class="access">Access: Private (Admin Only)</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/products/:id</span>
+                    </div>
+                    <div class="desc">Delete produk (soft delete)</div>
+                    <div class="access">Access: Private (Admin Only)</div>
+                </div>
+            </div>
+
+            <!-- Cart Section -->
+            <div class="section">
+                <h2>🛒 Cart</h2>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/cart</span>
+                    </div>
+                    <div class="desc">Get cart user beserta total harga</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/cart</span>
+                    </div>
+                    <div class="desc">Add item ke cart atau update quantity</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method put">PUT</span>
+                        <span class="path">/cart/:itemId</span>
+                    </div>
+                    <div class="desc">Update quantity item di cart</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/cart/:itemId</span>
+                    </div>
+                    <div class="desc">Remove item dari cart</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/cart</span>
+                    </div>
+                    <div class="desc">Clear semua item di cart</div>
+                    <div class="access">Access: Private</div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="section">
+                <h2>📋 Orders</h2>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/orders</span>
+                    </div>
+                    <div class="desc">Create order baru dari cart user</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/orders</span>
+                    </div>
+                    <div class="desc">Get semua order user yang login</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/orders/:id</span>
+                    </div>
+                    <div class="desc">Get detail order beserta items</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method put">PUT</span>
+                        <span class="path">/orders/:id</span>
+                    </div>
+                    <div class="desc">Update status order</div>
+                    <div class="access">Access: Private (Admin Only)</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/orders/:id</span>
+                    </div>
+                    <div class="desc">Cancel order (ubah status jadi cancelled)</div>
+                    <div class="access">Access: Private</div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div class="section">
+                <h2>👤 Users</h2>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/users/:id</span>
+                    </div>
+                    <div class="desc">Get user profile</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method put">PUT</span>
+                        <span class="path">/users/:id</span>
+                    </div>
+                    <div class="desc">Update profile user</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method put">PUT</span>
+                        <span class="path">/users/:id/password</span>
+                    </div>
+                    <div class="desc">Change user password</div>
+                    <div class="access">Access: Private</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="path">/users</span>
+                    </div>
+                    <div class="desc">Get semua users (list)</div>
+                    <div class="access">Access: Private (Admin Only)</div>
+                </div>
+
+                <div class="endpoint">
+                    <div>
+                        <span class="method delete">DELETE</span>
+                        <span class="path">/users/:id</span>
+                    </div>
+                    <div class="desc">Delete user account</div>
+                    <div class="access">Access: Private (Admin Only)</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Tips:</strong> Lihat file README.md untuk instruksi setup dan konfigurasi database.
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Project MENPRO. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
