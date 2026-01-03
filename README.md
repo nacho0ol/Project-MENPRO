@@ -83,6 +83,8 @@ npm install
 ### 4. Jalankan aplikasi
 npm start
 
+-----
+
 ## Dokumentasi API
 Method,Endpoint,Fungsi
 POST,/api/auth/register,Mendaftarkan pengguna baru
@@ -91,6 +93,8 @@ GET,/api/products,Mendapatkan daftar seluruh produk
 POST,/api/cart/add,Menambah produk ke keranjang
 POST,/api/orders/checkout,Memproses transaksi pemesanan
 PUT,/api/admin/update-stok,(Admin) Update stok daging
+
+-----
 
 ## Struktur proyek
 Project-MENPRO/
@@ -102,3 +106,4 @@ Project-MENPRO/
 ├── utils/              # Helper functions (Response handler)
 ├── app.js              # Entry point aplikasi
 └── DB-MANPRO.sql       # Skema database
+
