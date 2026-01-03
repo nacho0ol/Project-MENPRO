@@ -57,26 +57,29 @@ Proyek ini menggunakan database relasional dengan skema yang dioptimalkan menggu
 -----
 
 ## Dokumentasi API
-Method,Endpoint,Fungsi
-POST,/api/auth/register,Mendaftarkan pengguna baru
-POST,/api/auth/login,Masuk ke sistem
-GET,/api/products,Mendapatkan daftar seluruh produk
-POST,/api/cart/add,Menambah produk ke keranjang
-POST,/api/orders/checkout,Memproses transaksi pemesanan
-PUT,/api/admin/update-stok,(Admin) Update stok daging
+| Method | Endpoint | Fungsi |
+|------|---------|--------|
+| POST | /api/auth/register | Mendaftarkan pengguna baru |
+| POST | /api/auth/login | Masuk ke sistem |
+| GET | /api/products | Mendapatkan daftar seluruh produk |
+| POST | /api/cart/add | Menambah produk ke keranjang |
+| POST | /api/orders/checkout | Memproses transaksi pemesanan |
+| PUT | /api/admin/update-stok | (Admin) Update stok daging |
+
 
 -----
 
 ## Struktur Folder
 Project-MENPRO/
-├── config/             # Konfigurasi database
-├── controllers/        # Logika bisnis aplikasi
-├── middlewares/        # Validasi dan keamanan
-├── public/             # File frontend (HTML, CSS, JS)
-├── routes/             # Definisi routing API
-├── utils/              # Helper functions (Response handler)
-├── app.js              # Entry point aplikasi
-└── DB-MANPRO.sql       # Skema database
+├── config/             # Berisi konfigurasi koneksi database
+├── controllers/        # Berisi logika bisnis dan pengolahan request
+├── middlewares/        # Berisi middleware validasi dan keamanan
+├── public/             # Berisi file frontend (HTML, CSS, JavaScript)
+├── routes/             # Berisi definisi endpoint API
+├── utils/              # Berisi fungsi bantuan (helper)
+├── app.js              # File utama aplikasi
+└── DB-MANPRO.sql       # File skema dan struktur database
+
 
 -----
 
@@ -108,6 +111,7 @@ npm install
 npm start
 
 -----
+
 
 
 
