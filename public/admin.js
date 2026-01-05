@@ -22,9 +22,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 const el = document.getElementById(id);
                 if(el) el.value = '';
             });
+            document.getElementById('imagePreview').innerHTML = '';
             document.getElementById('addProductModal').style.display = 'block';
             const first = document.getElementById('p_nama');
             if(first) first.focus();
+        });
+    }
+
+    // Setup image preview untuk tambah produk
+    const fileInputAdd = document.getElementById('p_gambar');
+    if(fileInputAdd) {
+        fileInputAdd.addEventListener('change', (e) => {
+            previewImage(e.target, 'imagePreview');
+        });
+    }
+
+    // Setup image preview untuk edit produk
+    const fileInputEdit = document.getElementById('edit_gambar');
+    if(fileInputEdit) {
+        fileInputEdit.addEventListener('change', (e) => {
+            previewImage(e.target, 'editImagePreview');
         });
     }
 
@@ -93,8 +110,17 @@ function editProduct(id) {
         document.getElementById('edit_id').value = p.idProduk;
         document.getElementById('edit_nama').value = p.namaProduk;
         document.getElementById('edit_harga').value = p.harga;
-        document.getElementById('edit_gambar').value = p.filepath || '';
+        document.getElementById('edit_gambar').value = '';
         document.getElementById('edit_deskripsi').value = p.deskripsi || '';
+        
+        // Tampilkan preview gambar sekarang
+        const previewDiv = document.getElementById('editImagePreview');
+        if(p.filepath) {
+            previewDiv.innerHTML = `<img src="${p.filepath}" style="max-width: 150px; border-radius: 4px; margin-top: 10px;"><p style="font-size:12px; color:#666;">Gambar saat ini. Pilih gambar baru untuk menggantinya.</p>`;
+        } else {
+            previewDiv.innerHTML = '';
+        }
+        
         document.getElementById('editProductModal').style.display = 'block';
     }
 }
@@ -103,12 +129,28 @@ function closeEditModal() { document.getElementById('editProductModal').style.di
 async function submitEditProduct(e) {
     e.preventDefault();
     const id = document.getElementById('edit_id').value;
+    const fileInput = document.getElementById('edit_gambar');
+    
+    let filepath = null;
+    
+    // Upload file jika ada file baru yang dipilih
+    if(fileInput.files.length > 0) {
+        const uploadedUrl = await uploadProductImage(fileInput.files[0]);
+        if(!uploadedUrl) return; // Upload gagal
+        filepath = uploadedUrl;
+    }
+    
     const body = {
         namaProduk: document.getElementById('edit_nama').value,
         harga: document.getElementById('edit_harga').value,
-        filepath: document.getElementById('edit_gambar').value,
         deskripsi: document.getElementById('edit_deskripsi').value
     };
+    
+    // Hanya tambah filepath jika ada upload baru
+    if(filepath) {
+        body.filepath = filepath;
+    }
+    
     await fetch(`${API_URL}/admin/products/${id}`, {
         method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
     });
@@ -124,14 +166,64 @@ async function deleteProduct(id) {
 }
 function closeProductModal() { document.getElementById('addProductModal').style.display = 'none'; }
 
+// Fungsi untuk upload gambar produk
+async function uploadProductImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const res = await fetch(`${API_URL}/admin/upload`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await res.json();
+        if(result.success) {
+            return result.data.url;
+        } else {
+            alert('Gagal upload gambar: ' + result.message);
+            return null;
+        }
+    } catch(e) {
+        console.error('Upload error:', e);
+        alert('Gagal upload gambar: ' + e.message);
+        return null;
+    }
+}
+
+// Preview image sebelum upload
+function previewImage(input, previewId) {
+    const previewDiv = document.getElementById(previewId);
+    if(input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewDiv.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; border-radius: 4px; margin-top: 10px;">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        previewDiv.innerHTML = '';
+    }
+}
+
 async function submitNewProduct(e) {
     e.preventDefault();
+    const fileInput = document.getElementById('p_gambar');
+    
+    let filepath = null;
+    
+    // Upload file jika ada
+    if(fileInput.files.length > 0) {
+        const uploadedUrl = await uploadProductImage(fileInput.files[0]);
+        if(!uploadedUrl) return; // Upload gagal
+        filepath = uploadedUrl;
+    }
+    
     const body = {
         namaProduk: document.getElementById('p_nama').value,
         harga: document.getElementById('p_harga').value,
         stokKG: document.getElementById('p_stok').value,
         deskripsi: document.getElementById('p_deskripsi').value,
-        filepath: document.getElementById('p_gambar').value
+        filepath: filepath
     };
     await fetch(`${API_URL}/admin/products`, {
         method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)

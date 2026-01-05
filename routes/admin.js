@@ -1,7 +1,75 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Konfigurasi Multer untuk upload gambar
+const uploadDir = path.join(__dirname, '../public/uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        // Buat nama file unik dengan timestamp
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+    fileFilter: (req, file, cb) => {
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (allowedMimes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Format gambar tidak didukung. Gunakan JPEG, PNG, GIF, atau WebP'));
+        }
+    }
+});
+
+/**
+ * @route   POST /api/admin/upload
+ * @desc    Upload gambar produk
+ * @access  Admin
+ */
+router.post('/upload', upload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tidak ada file yang diupload'
+            });
+        }
+
+        // URL relatif untuk disimpan ke database
+        const fileUrl = `/uploads/${req.file.filename}`;
+
+        res.json({
+            success: true,
+            message: 'Gambar berhasil diupload',
+            data: {
+                filename: req.file.filename,
+                url: fileUrl,
+                size: req.file.size
+            }
+        });
+    } catch (error) {
+        console.error('Upload Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Gagal upload gambar'
+        });
+    }
+});
 
 /**
  * @route   GET /api/admin/products

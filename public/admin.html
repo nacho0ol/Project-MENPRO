@@ -140,7 +140,12 @@
                     <div class="form-group"><label>Harga (Rp)</label><input type="number" id="p_harga" required></div>
                     <div class="form-group"><label>Stok Awal</label><input type="number" id="p_stok" required></div>
                 </div>
-                <div class="form-group"><label>URL Gambar</label><input type="text" id="p_gambar"></div>
+                <div class="form-group">
+                    <label>Gambar Produk</label>
+                    <input type="file" id="p_gambar" accept="image/*">
+                    <small style="color:#888; font-size:11px;">Ukuran maksimal 5MB (JPEG, PNG, GIF, WebP)</small>
+                    <div id="imagePreview" style="margin-top: 10px;"></div>
+                </div>
                 <div class="form-group"><label>Deskripsi</label><textarea id="p_deskripsi" rows="3"></textarea></div>
                 <div class="modal-footer">
                     <button type="button" onclick="closeProductModal()" class="btn-action delete">Batal</button>
@@ -158,7 +163,12 @@
                 <input type="hidden" id="edit_id">
                 <div class="form-group"><label>Nama Produk</label><input type="text" id="edit_nama" required></div>
                 <div class="form-group"><label>Harga</label><input type="number" id="edit_harga" required></div>
-                <div class="form-group"><label>URL Gambar</label><input type="text" id="edit_gambar"></div>
+                <div class="form-group">
+                    <label>Gambar Produk</label>
+                    <input type="file" id="edit_gambar" accept="image/*">
+                    <small style="color:#888; font-size:11px;">Biarkan kosong jika tidak ingin mengubah gambar</small>
+                    <div id="editImagePreview" style="margin-top: 10px;"></div>
+                </div>
                 <div class="form-group"><label>Deskripsi</label><textarea id="edit_deskripsi" rows="3"></textarea></div>
                 <div class="modal-footer">
                     <button type="button" onclick="closeEditModal()" class="btn-action delete">Batal</button>
