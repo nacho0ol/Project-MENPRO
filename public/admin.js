@@ -1,371 +1,311 @@
-// API Base URL
 const API_URL = 'http://localhost:3000/api';
+let productsData = [];
 
-// ===== LOAD DATA SAAT HALAMAN DIBUKA =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Check role admin
+    // 1. Cek Login
     const userRole = localStorage.getItem('userRole');
     if (userRole !== 'Admin') {
-        alert("Akses Ditolak! Silakan login sebagai Admin.");
+        alert("Akses Ditolak!");
         window.location.href = 'login.html';
         return;
     }
 
-    // Load data produk
+    // 2. Setup Tombol Tambah Produk (Lama)
+    const btnAdd = document.querySelector('.btn-add');
+    if(btnAdd) {
+        btnAdd.addEventListener('click', () => {
+            document.getElementById('addProductModal').style.display = 'block';
+        });
+    }
+
+    // 3. Setup Tombol Tambah User (Baru)
+    const btnAddUser = document.getElementById('btnAddUser');
+    if(btnAddUser) {
+        btnAddUser.addEventListener('click', () => {
+            openUserModal();
+        });
+    }
+
+    // 4. Load Semua Data
     loadProducts();
     loadOrders();
     loadCustomers();
+    loadUsers();
 });
 
-// ===== LOAD PRODUK =====
+// =======================
+// MODULE: PRODUK
+// =======================
 async function loadProducts() {
     try {
-        const response = await fetch(`${API_URL}/admin/products`);
-        const result = await response.json();
-
-        if (!result.success) {
-            console.error('Gagal load produk:', result.message);
-            return;
+        const res = await fetch(`${API_URL}/admin/products`);
+        const result = await res.json();
+        if(result.success) {
+            productsData = result.data;
+            const tbody = document.querySelector('.products-table tbody');
+            tbody.innerHTML = '';
+            productsData.forEach(p => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${p.filepath || ''}" width="40" onerror="this.style.display='none'"></td>
+                    <td>${p.namaProduk}</td>
+                    <td>Rp ${formatCurrency(p.harga)}</td>
+                    <td><span class="stock-badge ${p.stokKG > 10 ? 'safe' : 'low'}">${p.stokKG} Kg</span></td>
+                    <td>
+                        <button class="btn-icon plus" onclick="updateStock(${p.idProduk}, 'masuk')">+</button>
+                        <button class="btn-icon minus" onclick="updateStock(${p.idProduk}, 'keluar')">-</button>
+                    </td>
+                    <td>
+                        <button class="btn-action edit" onclick="editProduct(${p.idProduk})"><i class="fas fa-edit"></i></button>
+                        <button class="btn-action delete" onclick="deleteProduct(${p.idProduk})"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-
-        const products = result.data;
-        const tbody = document.querySelector('.products-table tbody');
-        tbody.innerHTML = '';
-
-        products.forEach(prod => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="${prod.filepath || 'https://via.placeholder.com/50'}" class="prod-img" onerror="this.src='https://via.placeholder.com/50'"></td>
-                <td>${prod.namaProduk}</td>
-                <td>Rp ${formatCurrency(prod.harga)}</td>
-                <td>
-                    <span class="stock-badge ${prod.stokKG > 10 ? 'safe' : 'low'}">
-                        ${prod.stokKG} Kg
-                    </span>
-                </td>
-                <td>
-                    <button class="btn-icon plus" onclick="updateStock(${prod.idProduk}, 'masuk')">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button class="btn-icon minus" onclick="updateStock(${prod.idProduk}, 'keluar')">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                </td>
-                <td>
-                    <button class="btn-action edit" onclick="editProduct(${prod.idProduk})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-action delete" onclick="deleteProduct(${prod.idProduk})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading products:', error);
-    }
+    } catch(e) { console.error(e); }
 }
 
-// ===== UPDATE STOK =====
-async function updateStock(idProduk, tipe) {
-    const jumlah = prompt(`Masukkan jumlah stok yang ${tipe === 'masuk' ? 'masuk' : 'keluar'} (Kg):`);
-    
-    if (jumlah === null || jumlah === '') return;
-    if (isNaN(jumlah) || parseFloat(jumlah) <= 0) {
-        alert('Jumlah harus angka positif');
-        return;
-    }
-
-    const keterangan = prompt('Keterangan (opsional):') || '';
-
-    try {
-        const response = await fetch(`${API_URL}/admin/stock`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                idProduk,
-                tipe,
-                jumlah: parseFloat(jumlah),
-                keterangan
-            })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Stok berhasil diupdate!');
-            loadProducts();
-        } else {
-            alert('Gagal update stok: ' + result.message);
-        }
-    } catch (error) {
-        console.error('Error updating stock:', error);
-        alert('Terjadi kesalahan saat update stok');
-    }
+async function updateStock(id, tipe) {
+    const jml = prompt(`Jumlah stok ${tipe} (Kg):`);
+    if(!jml) return;
+    await fetch(`${API_URL}/admin/stock`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({idProduk: id, tipe, jumlah: parseFloat(jml), keterangan: ''})
+    });
+    loadProducts();
 }
 
-// ===== DELETE PRODUK =====
-async function deleteProduct(idProduk) {
-    if (!confirm('Yakin ingin menghapus produk ini?')) return;
-
-    try {
-        const response = await fetch(`${API_URL}/admin/products/${idProduk}`, {
-            method: 'DELETE'
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Produk berhasil dihapus!');
-            loadProducts();
-        } else {
-            alert('Gagal hapus produk: ' + result.message);
-        }
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        alert('Terjadi kesalahan saat hapus produk');
+function editProduct(id) {
+    const p = productsData.find(x => x.idProduk === id);
+    if(p) {
+        document.getElementById('edit_id').value = p.idProduk;
+        document.getElementById('edit_nama').value = p.namaProduk;
+        document.getElementById('edit_harga').value = p.harga;
+        document.getElementById('edit_gambar').value = p.filepath || '';
+        document.getElementById('edit_deskripsi').value = p.deskripsi || '';
+        document.getElementById('editProductModal').style.display = 'block';
     }
 }
+function closeEditModal() { document.getElementById('editProductModal').style.display = 'none'; }
 
-// ===== EDIT PRODUK =====
-function editProduct(idProduk) {
-    alert('Fitur edit produk akan segera tersedia');
-    // TODO: Buka modal edit produk
+async function submitEditProduct(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit_id').value;
+    const body = {
+        namaProduk: document.getElementById('edit_nama').value,
+        harga: document.getElementById('edit_harga').value,
+        filepath: document.getElementById('edit_gambar').value,
+        deskripsi: document.getElementById('edit_deskripsi').value
+    };
+    await fetch(`${API_URL}/admin/products/${id}`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+    });
+    closeEditModal();
+    loadProducts();
 }
 
-// ===== LOAD ORDERS =====
+async function deleteProduct(id) {
+    if(confirm('Hapus produk?')) {
+        await fetch(`${API_URL}/admin/products/${id}`, {method: 'DELETE'});
+        loadProducts();
+    }
+}
+function closeProductModal() { document.getElementById('addProductModal').style.display = 'none'; }
+
+async function submitNewProduct(e) {
+    e.preventDefault();
+    const body = {
+        namaProduk: document.getElementById('p_nama').value,
+        harga: document.getElementById('p_harga').value,
+        stokKG: document.getElementById('p_stok').value,
+        deskripsi: document.getElementById('p_deskripsi').value,
+        filepath: document.getElementById('p_gambar').value
+    };
+    await fetch(`${API_URL}/admin/products`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+    });
+    closeProductModal();
+    loadProducts();
+}
+
+// =======================
+// MODULE: ORDERS
+// =======================
 async function loadOrders() {
     try {
-        const response = await fetch(`${API_URL}/admin/orders`);
-        const result = await response.json();
-
-        if (!result.success) {
-            console.error('Gagal load orders:', result.message);
-            return;
+        const res = await fetch(`${API_URL}/admin/orders`);
+        const result = await res.json();
+        if(result.success) {
+            const tbody = document.querySelector('.orders-table tbody');
+            tbody.innerHTML = '';
+            result.data.forEach(o => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${o.idPemesanan}</td>
+                    <td>${o.namaDepan} ${o.namaBelakang || ''}</td>
+                    <td>Rp ${formatCurrency(o.grandTotal)}</td>
+                    <td>${o.Status}</td>
+                    <td>
+                        <select onchange="updateOrderStatus(${o.idPemesanan}, this.value)">
+                            <option value="dipesan" ${o.Status=='dipesan'?'selected':''}>Dipesan</option>
+                            <option value="diproses" ${o.Status=='diproses'?'selected':''}>Diproses</option>
+                            <option value="dikirim" ${o.Status=='dikirim'?'selected':''}>Dikirim</option>
+                            <option value="sukses" ${o.Status=='sukses'?'selected':''}>Sukses</option>
+                            <option value="batal" ${o.Status=='batal'?'selected':''}>Batal</option>
+                        </select>
+                    </td>
+                    <td><button class="btn-view" onclick="viewOrderDetail(${o.idPemesanan})">Detail</button></td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-
-        const orders = result.data;
-        const tbody = document.querySelector('.orders-table tbody');
-        tbody.innerHTML = '';
-
-        orders.forEach(order => {
-            const row = document.createElement('tr');
-            const namaCustomer = `${order.namaDepan || 'N/A'} ${order.namaBelakang || ''}`;
-            
-            row.innerHTML = `
-                <td>#${String(order.idPemesanan).padStart(4, '0')}</td>
-                <td>${namaCustomer}</td>
-                <td>Rp ${formatCurrency(order.totalBelanja)}</td>
-                <td>${order.Status}</td>
-                <td>
-                    <select class="status-select" onchange="updateOrderStatus(${order.idPemesanan}, this.value)">
-                        <option value="dipesan" ${order.Status === 'dipesan' ? 'selected' : ''}>Dipesan</option>
-                        <option value="diproses" ${order.Status === 'diproses' ? 'selected' : ''}>Diproses</option>
-                        <option value="dikirim" ${order.Status === 'dikirim' ? 'selected' : ''}>Dikirim</option>
-                        <option value="sukses" ${order.Status === 'sukses' ? 'selected' : ''}>Sukses</option>
-                        <option value="batal" ${order.Status === 'batal' ? 'selected' : ''}>Batal</option>
-                    </select>
-                </td>
-                <td>
-                    <button class="btn-view" onclick="viewOrderDetail(${order.idPemesanan})">
-                        <i class="fas fa-eye"></i> Detail
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading orders:', error);
-    }
+    } catch(e) { console.error(e); }
 }
 
-// ===== UPDATE ORDER STATUS =====
-async function updateOrderStatus(idPemesanan, newStatus) {
-    try {
-        const response = await fetch(`${API_URL}/admin/orders/${idPemesanan}/status`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status: newStatus })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Status pesanan berhasil diupdate!');
-            loadOrders();
-        } else {
-            alert('Gagal update status: ' + result.message);
-        }
-    } catch (error) {
-        console.error('Error updating order status:', error);
-        alert('Terjadi kesalahan saat update status');
-    }
+async function updateOrderStatus(id, status) {
+    await fetch(`${API_URL}/admin/orders/${id}/status`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({status})
+    });
+    loadOrders();
 }
 
-// ===== VIEW ORDER DETAIL (DIPERBAIKI) =====
-async function viewOrderDetail(idPemesanan) {
-    try {
-        const response = await fetch(`${API_URL}/admin/orders/${idPemesanan}`);
-        const result = await response.json();
-
-        if (!result.success) {
-            alert('Gagal load detail order');
-            return;
-        }
-
+async function viewOrderDetail(id) {
+    const res = await fetch(`${API_URL}/admin/orders/${id}`);
+    const result = await res.json();
+    if(result.success) {
         const { order, items } = result.data;
-        
-        let itemsHtml = items.map(item => `
-            <tr>
-                <td style="padding: 10px;">${item.namaProduk}</td>
-                <td style="padding: 10px;">${item.qtyPesanan} Kg</td>
-                <td style="padding: 10px;">Rp ${formatCurrency(item.hargaSatuan)}</td>
-                <td style="padding: 10px;">Rp ${formatCurrency(item.subtotal)}</td>
-            </tr>
-        `).join('');
-
-        // Membangun HTML untuk ditampilkan di Modal
+        let itemsHtml = items.map(i => `<tr><td>${i.namaProduk}</td><td>${i.qtyPesanan}</td><td>${formatCurrency(i.subtotal)}</td></tr>`).join('');
         const html = `
-            <h3 style="color: #24214B; margin-bottom: 10px;">Detail Pesanan #${String(idPemesanan).padStart(4, '0')}</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                <div>
-                    <p><strong>Nama:</strong> ${order.namaDepan} ${order.namaBelakang}</p>
-                    <p><strong>Email:</strong> ${order.email}</p>
-                    <p><strong>No. Telp:</strong> ${order.no_telp}</p>
-                    <p><strong>Alamat:</strong> ${order.alamat}</p>
-                </div>
-                <div>
-                    <p><strong>Tanggal:</strong> ${new Date(order.tanggalPesan).toLocaleString('id-ID')}</p>
-                    <p><strong>Status:</strong> ${order.Status.toUpperCase()}</p>
-                </div>
-            </div>
-
-            <h4 style="margin-bottom: 10px;">Item Pesanan:</h4>
-            <table width="100%" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd;">
-                <thead style="background: #f1f5f9;">
-                    <tr style="border-bottom: 1px solid #ddd;">
-                        <td style="padding: 10px;"><strong>Produk</strong></td>
-                        <td style="padding: 10px;"><strong>Qty</strong></td>
-                        <td style="padding: 10px;"><strong>Harga</strong></td>
-                        <td style="padding: 10px;"><strong>Subtotal</strong></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${itemsHtml}
-                </tbody>
-                <tfoot style="background: #f8f9fa;">
-                    <tr>
-                        <td colspan="3" style="text-align: right; padding: 8px;"><strong>Total Belanja:</strong></td>
-                        <td style="padding: 8px;">Rp ${formatCurrency(order.totalBelanja)}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="text-align: right; padding: 8px;"><strong>Ongkir:</strong></td>
-                        <td style="padding: 8px;">Rp ${formatCurrency(order.ongkir)}</td>
-                    </tr>
-                    <tr style="font-size: 1.1em; color: #24214B;">
-                        <td colspan="3" style="text-align: right; padding: 10px;"><strong>Grand Total:</strong></td>
-                        <td style="padding: 10px;"><strong>Rp ${formatCurrency(order.grandTotal)}</strong></td>
-                    </tr>
-                </tfoot>
+            <h3>Order #${id}</h3>
+            <p>Customer: ${order.namaDepan} (${order.no_telp})</p>
+            <p>Alamat: ${order.alamat}</p>
+            <table width="100%" border="1" style="border-collapse:collapse; margin-top:10px;">
+                <tr><td>Produk</td><td>Qty</td><td>Subtotal</td></tr>
+                ${itemsHtml}
             </table>
+            <h4 style="text-align:right; margin-top:10px;">Total: Rp ${formatCurrency(order.grandTotal)}</h4>
         `;
-
-        // Masukkan HTML ke Modal dan tampilkan
         document.getElementById('modal-body').innerHTML = html;
         document.getElementById('orderModal').style.display = 'block';
-
-    } catch (error) {
-        console.error('Error viewing order detail:', error);
-        alert('Terjadi kesalahan');
     }
 }
+function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
 
-// ===== FUNGSI TUTUP MODAL =====
-function closeModal() {
-    document.getElementById('orderModal').style.display = 'none';
-}
-
-// Tutup modal jika user klik area gelap di luar box
-window.onclick = function(event) {
-    const modal = document.getElementById('orderModal');
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-// ===== LOAD CUSTOMERS =====
+// =======================
+// MODULE: CUSTOMERS
+// =======================
 async function loadCustomers() {
     try {
-        const response = await fetch(`${API_URL}/admin/customers`);
-        const result = await response.json();
-
-        if (!result.success) {
-            console.error('Gagal load customers:', result.message);
-            return;
+        const res = await fetch(`${API_URL}/admin/customers`);
+        const result = await res.json();
+        if(result.success) {
+            const tbody = document.querySelector('.customers-table tbody');
+            tbody.innerHTML = '';
+            result.data.forEach(c => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${c.namaDepan} ${c.namaBelakang||''}</td>
+                    <td>${c.email}</td>
+                    <td>${c.no_telp||'-'}</td>
+                    <td>${c.alamat||'-'}</td>
+                    <td><button class="btn-action delete" onclick="deleteUser(${c.idUser})"><i class="fas fa-trash"></i></button></td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-
-        const customers = result.data;
-        const tbody = document.querySelector('.customers-table tbody');
-        tbody.innerHTML = '';
-
-        customers.forEach(cust => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${cust.namaDepan} ${cust.namaBelakang || 'N/A'}</td>
-                <td>${cust.email}</td>
-                <td>${cust.no_telp || 'N/A'}</td>
-                <td>${cust.alamat || 'N/A'}</td>
-                <td>
-                    <button class="btn-action delete" onclick="deleteCustomer(${cust.idUser})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading customers:', error);
-    }
+    } catch(e) { console.error(e); }
 }
 
-// ===== DELETE CUSTOMER =====
-async function deleteCustomer(idUser) {
-    if (!confirm('Yakin ingin menghapus customer ini? Semua data akan dihapus.')) return;
-
+// =======================
+// MODULE: USERS
+// =======================
+async function loadUsers() {
     try {
-        const response = await fetch(`${API_URL}/admin/customers/${idUser}`, {
-            method: 'DELETE'
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Customer berhasil dihapus!');
-            loadCustomers();
-        } else {
-            alert('Gagal hapus customer: ' + result.message);
+        const res = await fetch(`${API_URL}/admin/users`);
+        const result = await res.json();
+        if(result.success) {
+            const tbody = document.querySelector('.users-table tbody');
+            tbody.innerHTML = '';
+            result.data.forEach(u => {
+                const row = document.createElement('tr');
+                const data = encodeURIComponent(JSON.stringify(u));
+                row.innerHTML = `
+                    <td>${u.idUser}</td>
+                    <td>${u.username}</td>
+                    <td>${u.email}</td>
+                    <td>${u.role}</td>
+                    <td>
+                        <button class="btn-action edit" onclick="editUser('${data}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn-action delete" onclick="deleteUser(${u.idUser})"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-    } catch (error) {
-        console.error('Error deleting customer:', error);
-        alert('Terjadi kesalahan saat hapus customer');
+    } catch(e) { console.error(e); }
+}
+
+function openUserModal(data = null) {
+    const form = document.getElementById('userForm');
+    form.reset();
+    if(data) {
+        document.getElementById('userModalTitle').innerText = 'Edit Akun';
+        document.getElementById('u_id').value = data.idUser;
+        document.getElementById('u_username').value = data.username;
+        document.getElementById('u_username').disabled = true;
+        document.getElementById('u_email').value = data.email;
+        document.getElementById('u_role').value = data.role;
+        document.getElementById('u_password').required = false;
+        document.getElementById('passHelp').innerText = '*Kosongkan jika password tetap';
+    } else {
+        document.getElementById('userModalTitle').innerText = 'Tambah Akun';
+        document.getElementById('u_id').value = '';
+        document.getElementById('u_username').disabled = false;
+        document.getElementById('u_password').required = true;
+        document.getElementById('passHelp').innerText = '*Wajib diisi';
+    }
+    document.getElementById('userModal').style.display = 'block';
+}
+function closeUserModal() { document.getElementById('userModal').style.display = 'none'; }
+function editUser(str) { openUserModal(JSON.parse(decodeURIComponent(str))); }
+
+async function submitUser(e) {
+    e.preventDefault();
+    const id = document.getElementById('u_id').value;
+    const body = {
+        username: document.getElementById('u_username').value,
+        email: document.getElementById('u_email').value,
+        role: document.getElementById('u_role').value,
+        password: document.getElementById('u_password').value
+    };
+    
+    const url = id ? `${API_URL}/admin/users/${id}` : `${API_URL}/admin/users`;
+    const method = id ? 'PUT' : 'POST';
+
+    await fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+    closeUserModal();
+    loadUsers();
+    loadCustomers(); // Refresh customer juga in case email berubah
+}
+
+async function deleteUser(id) {
+    if(confirm('Hapus user ini?')) {
+        await fetch(`${API_URL}/admin/users/${id}`, {method: 'DELETE'});
+        loadUsers();
+        loadCustomers();
     }
 }
 
-// ===== LOGOUT =====
+// Helper
 function logoutAdmin() {
-    if(confirm("Apakah Anda yakin ingin keluar?")) {
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('username');
-        window.location.href = 'login.html';
-    }
+    if(confirm('Logout?')) { localStorage.clear(); window.location.href='login.html'; }
 }
+function formatCurrency(val) { return new Intl.NumberFormat('id-ID').format(val); }
 
-// ===== HELPER FUNCTION =====
-function formatCurrency(value) {
-    return new Intl.NumberFormat('id-ID').format(value);
+// Close modal on click outside
+window.onclick = function(e) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(m => { if(e.target == m) m.style.display = "none"; });
 }

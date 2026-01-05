@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
+const bcrypt = require('bcrypt')
 
 /**
  * @route   GET /api/admin/products
@@ -389,6 +390,80 @@ router.delete('/customers/:id', async (req, res) => {
             message: 'Gagal menghapus pelanggan',
             error: error.message
         });
+    }
+});
+
+// ==========================================
+// MANAJEMEN USER (ADMIN KHUSUS TABEL USER)
+// ==========================================
+
+// GET ALL USERS (Admin & Customer, Tampilan Tabel User)
+router.get('/users', async (req, res) => {
+    try {
+        const sql = 'SELECT idUser, username, email, role, created_at FROM User ORDER BY idUser ASC';
+        const [users] = await db.query(sql);
+        res.json({ success: true, data: users });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// CREATE USER BARU (Hanya Tabel User)
+router.post('/users', async (req, res) => {
+    const { username, email, password, role } = req.body;
+    
+    if (!username || !email || !password || !role) {
+        return res.status(400).json({ success: false, message: 'Data tidak lengkap!' });
+    }
+
+    try {
+        // Cek duplikat
+        const [exist] = await db.query('SELECT idUser FROM User WHERE username = ? OR email = ?', [username, email]);
+        if(exist.length > 0) return res.status(409).json({ success: false, message: 'Username/Email sudah dipakai' });
+
+        // Hash Password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert User
+        await db.query(
+            'INSERT INTO User (username, email, password, role) VALUES (?, ?, ?, ?)',
+            [username, email, hashedPassword, role]
+        );
+
+        res.status(201).json({ success: true, message: 'User berhasil dibuat' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Gagal membuat user' });
+    }
+});
+
+// UPDATE USER
+router.put('/users/:id', async (req, res) => {
+    const idUser = req.params.id;
+    const { email, role, password } = req.body;
+
+    try {
+        if (password && password.trim() !== '') {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            await db.query('UPDATE User SET email = ?, role = ?, password = ? WHERE idUser = ?', 
+                [email, role, hashedPassword, idUser]);
+        } else {
+            await db.query('UPDATE User SET email = ?, role = ? WHERE idUser = ?', 
+                [email, role, idUser]);
+        }
+        res.json({ success: true, message: 'User diupdate' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// DELETE USER (Endpoint ini bisa dipakai untuk tombol hapus di tabel User juga)
+router.delete('/users/:id', async (req, res) => {
+    try {
+        await db.query('DELETE FROM User WHERE idUser = ?', [req.params.id]);
+        res.json({ success: true, message: 'User dihapus' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 

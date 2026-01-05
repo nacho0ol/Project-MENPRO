@@ -16,10 +16,7 @@
             <i class="fas fa-cow"></i> <span>Olivia Admin</span>
         </div>
         <ul class="sidebar-menu">
-            <li class="active"><a href="#"><i class="fas fa-box"></i> <span>Kelola Produk</span></a></li>
-            <li><a href="#"><i class="fas fa-shopping-bag"></i> <span>Riwayat Pesanan</span></a></li>
-            <li><a href="#"><i class="fas fa-users"></i> <span>Data Pelanggan</span></a></li>
-            
+            <li class="active"><a href="#"><i class="fas fa-box"></i> <span>Dashboard</span></a></li>
             <li class="logout">
                 <a href="#" onclick="logoutAdmin()">
                     <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
@@ -29,7 +26,6 @@
     </div>
 
     <div class="main-content">
-        
         <header>
             <h2>Dashboard Overview</h2>
             <div class="user-wrapper">
@@ -54,21 +50,18 @@
                                 <td>Foto</td>
                                 <td>Nama Produk</td>
                                 <td>Harga</td>
-                                <td>Stok (Kg/Pack)</td>
+                                <td>Stok</td>
                                 <td>Kelola Stok</td>
                                 <td>Aksi</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="card-section" style="margin-top: 30px;">
-                <div class="card-header">
-                    <h3>Riwayat Pesanan Masuk</h3>
-                </div>
+                <div class="card-header"><h3>Riwayat Pesanan Masuk</h3></div>
                 <div class="card-body">
                     <table width="100%" class="orders-table">
                         <thead>
@@ -81,16 +74,13 @@
                                 <td>Detail</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="card-section" style="margin-top: 30px;">
-                <div class="card-header">
-                    <h3>Data Pelanggan</h3>
-                </div>
+                <div class="card-header"><h3>Data Pelanggan (Profil)</h3></div>
                 <div class="card-body">
                     <table width="100%" class="customers-table">
                         <thead>
@@ -102,8 +92,28 @@
                                 <td>Aksi</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            </tbody>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-section" style="margin-top: 30px; margin-bottom: 50px;">
+                <div class="card-header">
+                    <h3>Manajemen Akun User</h3>
+                    <button class="btn-add" id="btnAddUser"><i class="fas fa-plus"></i> Tambah Akun</button>
+                </div>
+                <div class="card-body">
+                    <table width="100%" class="users-table">
+                        <thead>
+                            <tr>
+                                <td>ID</td>
+                                <td>Username</td>
+                                <td>Email</td>
+                                <td>Role</td>
+                                <td>Aksi</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -113,11 +123,79 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="modal-body">
-                </div>
+            <div id="modal-body"></div>
             <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px;">
-                <button onclick="closeModal()" class="btn-action delete" style="padding: 8px 20px;">Tutup</button>
+                <button onclick="closeModal()" class="btn-action delete">Tutup</button>
             </div>
+        </div>
+    </div>
+
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeProductModal()">&times;</span>
+            <h3 style="color: var(--brand-navy); margin-bottom: 20px;">Tambah Produk</h3>
+            <form id="addProductForm" onsubmit="submitNewProduct(event)">
+                <div class="form-group"><label>Nama Produk</label><input type="text" id="p_nama" required></div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Harga (Rp)</label><input type="number" id="p_harga" required></div>
+                    <div class="form-group"><label>Stok Awal</label><input type="number" id="p_stok" required></div>
+                </div>
+                <div class="form-group"><label>URL Gambar</label><input type="text" id="p_gambar"></div>
+                <div class="form-group"><label>Deskripsi</label><textarea id="p_deskripsi" rows="3"></textarea></div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeProductModal()" class="btn-action delete">Batal</button>
+                    <button type="submit" class="btn-action edit" style="background: var(--brand-navy);">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditModal()">&times;</span>
+            <h3 style="color: var(--brand-navy); margin-bottom: 20px;">Edit Produk</h3>
+            <form id="editProductForm" onsubmit="submitEditProduct(event)">
+                <input type="hidden" id="edit_id">
+                <div class="form-group"><label>Nama Produk</label><input type="text" id="edit_nama" required></div>
+                <div class="form-group"><label>Harga</label><input type="number" id="edit_harga" required></div>
+                <div class="form-group"><label>URL Gambar</label><input type="text" id="edit_gambar"></div>
+                <div class="form-group"><label>Deskripsi</label><textarea id="edit_deskripsi" rows="3"></textarea></div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeEditModal()" class="btn-action delete">Batal</button>
+                    <button type="submit" class="btn-action edit" style="background: var(--brand-navy);">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content" style="width: 400px;">
+            <span class="close-btn" onclick="closeUserModal()">&times;</span>
+            <h3 id="userModalTitle" style="color: var(--brand-navy); margin-bottom: 20px;">Tambah Akun</h3>
+            <form id="userForm" onsubmit="submitUser(event)">
+                <input type="hidden" id="u_id">
+                <div class="form-group">
+                    <label>Username</label><input type="text" id="u_username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label><input type="email" id="u_email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label><input type="password" id="u_password">
+                    <small style="color:#888; font-size:11px;" id="passHelp">*Wajib untuk user baru</small>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="u_role" class="status-select" style="width:100%">
+                        <option value="Customer">Customer</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeUserModal()" class="btn-action delete">Batal</button>
+                    <button type="submit" class="btn-action edit" style="background: var(--brand-navy);">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
