@@ -106,7 +106,14 @@
     </div>
 
     <script>
-        // 1. Load Cart
+        // 1. Check login terlebih dahulu
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!userData.idUser && !userData.id) {
+            alert('Anda harus login terlebih dahulu untuk checkout');
+            window.location.href = 'login.html';
+        }
+
+        // 2. Load Cart
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         if (cart.length === 0) { window.location.href = 'index.html'; }
 
@@ -128,42 +135,86 @@
         document.getElementById('subTotal').innerText = 'Rp ' + subTotal.toLocaleString('id-ID');
         document.getElementById('finalTotal').innerText = 'Rp ' + finalTotal.toLocaleString('id-ID');
 
-        // 2. LOGIKA BARU: Simpan Order & Kirim WA
-        function kirimPesanan(e) {
+        // 3. LOGIKA BARU: Simpan Order ke Database via API & Kirim WA
+        async function kirimPesanan(e) {
             e.preventDefault();
-            const nama = document.getElementById('nama').value;
-            const wa = document.getElementById('wa').value;
-            const alamat = document.getElementById('alamat').value;
-            const payment = document.querySelector('input[name="payment"]:checked').value;
+            
+            try {
+                const nama = document.getElementById('nama').value;
+                const wa = document.getElementById('wa').value;
+                const alamat = document.getElementById('alamat').value;
+                const payment = document.querySelector('input[name="payment"]:checked').value;
 
-            // A. BUAT DATA ORDER UNTUK DISIMPAN KE HISTORY
-            const newOrder = {
-                id: 'ORD-' + Date.now().toString().slice(-6), // ID Unik
-                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-                items: cart, // Simpan barang yg dibeli
-                total: finalTotal,
-                status: 'Menunggu Konfirmasi', // Status awal
-                payment: payment
-            };
+                // Gunakan userData yang sudah di-load di atas
+                const idUser = userData.idUser || userData.id;
 
-            // B. AMBIL HISTORY LAMA & GABUNGKAN
-            let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-            orderHistory.unshift(newOrder); // Masukkan ke paling atas
-            localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+                // Prepare items dari cart untuk API
+                const items = cart.map(item => ({
+                    idProduk: item.idProduk || item.id || 1,
+                    qtyPesanan: parseFloat(item.qty),
+                    hargaSatuan: parseFloat(item.price)
+                }));
 
-            // C. HAPUS KERANJANG (Karena sudah dibeli)
-            localStorage.removeItem('cart');
+                // Siapkan data order untuk API
+                const orderData = {
+                    idUser: parseInt(idUser),
+                    namaDepan: nama.split(' ')[0],
+                    namaBelakang: nama.split(' ').slice(1).join(' ') || '',
+                    no_telp: wa,
+                    alamat: alamat,
+                    payment_method: payment,
+                    items: items,
+                    ongkir: 0 // Gratis ongkir
+                };
 
-            // D. KIRIM KE WA
-            let message = `Halo Admin Olivia Meat!%0A%0APesanan Baru (${newOrder.id}):%0A`;
-            cart.forEach(item => { message += `${item.qty}x ${item.name}%0A`; });
-            message += `%0A*Total: Rp ${finalTotal.toLocaleString('id-ID')}*%0A`;
-            message += `------------------%0A`;
-            message += `Nama: ${nama}%0AHP: ${wa}%0AAlamat: ${alamat}%0APembayaran: ${payment}`;
+                // POST ke API
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
 
-            // E. BUKA WA & REDIRECT KE PROFILE (HISTORY)
-            window.open(`https://wa.me/6282136656877?text=${message}`, '_blank');
-            window.location.href = 'profile.html'; // Pindah ke halaman history
+                const result = await response.json();
+
+                if (result.success) {
+                    // A. BUAT DATA ORDER UNTUK DISIMPAN KE HISTORY (untuk tampilan lokal)
+                    const newOrder = {
+                        id: 'ORD-' + result.data.idPemesanan,
+                        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        items: cart,
+                        total: result.data.grandTotal,
+                        status: 'Menunggu Konfirmasi',
+                        payment: payment
+                    };
+
+                    // B. AMBIL HISTORY LAMA & GABUNGKAN
+                    let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+                    orderHistory.unshift(newOrder);
+                    localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+
+                    // C. HAPUS KERANJANG (Karena sudah dibeli)
+                    localStorage.removeItem('cart');
+
+                    // D. KIRIM KE WA
+                    let message = `Halo Admin Olivia Meat!%0A%0APesanan Baru (${newOrder.id}):%0A`;
+                    cart.forEach(item => { message += `${item.qty}x ${item.name}%0A`; });
+                    message += `%0A*Total: Rp ${result.data.grandTotal.toLocaleString('id-ID')}*%0A`;
+                    message += `------------------%0A`;
+                    message += `Nama: ${nama}%0AHP: ${wa}%0AAlamat: ${alamat}%0APembayaran: ${payment}`;
+
+                    // E. BUKA WA & REDIRECT KE PROFILE
+                    window.open(`https://wa.me/6282136656877?text=${message}`, '_blank');
+                    alert('✓ Pesanan berhasil dibuat! Data sudah disimpan di database.');
+                    window.location.href = 'profile.html';
+                } else {
+                    alert('❌ Gagal membuat pesanan: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Terjadi kesalahan saat membuat pesanan');
+            }
         }
     </script>
 </body>

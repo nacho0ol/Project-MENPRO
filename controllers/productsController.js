@@ -5,7 +5,7 @@ const db = require('../config/database');
  */
 exports.getAllProducts = async (req, res) => {
     try {
-        const [products] = await db.query('SELECT * FROM products WHERE status = "active"');
+        const [products] = await db.query('SELECT idProduk, namaProduk, harga, stokKG, deskripsi, filepath FROM Produk');
 
         res.json({
             success: true,
@@ -30,7 +30,7 @@ exports.getProductById = async (req, res) => {
         const { id } = req.params;
 
         const [products] = await db.query(
-            'SELECT * FROM products WHERE id = ? AND status = "active"',
+            'SELECT idProduk, namaProduk, harga, stokKG, deskripsi, filepath FROM Produk WHERE idProduk = ?',
             [id]
         );
 

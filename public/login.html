@@ -174,7 +174,16 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // Simpan session di localStorage
+                    // Simpan session di localStorage sebagai 1 object
+                    const userData = {
+                        id: result.data.idUser,
+                        idUser: result.data.idUser,
+                        username: result.data.username,
+                        email: result.data.email,
+                        role: result.data.role
+                    };
+                    
+                    localStorage.setItem('user', JSON.stringify(userData));
                     localStorage.setItem('userRole', result.data.role);
                     localStorage.setItem('username', result.data.username);
                     localStorage.setItem('userId', result.data.idUser);

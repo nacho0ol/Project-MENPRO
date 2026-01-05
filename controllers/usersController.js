@@ -8,21 +8,28 @@ exports.getUserProfile = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const [users] = await db.query(
-            'SELECT id, email, name, phone, role, created_at FROM users WHERE id = ?',
+        // Get profil customer dari tabel profilCustomer
+        const [profiles] = await db.query(
+            'SELECT idProfil, idUser, namaDepan, namaBelakang, alamat, no_telp FROM profilCustomer WHERE idUser = ?',
             [id]
         );
 
-        if (users.length === 0) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'User tidak ditemukan' 
+        if (profiles.length === 0) {
+            // Return empty profile jika belum ada
+            return res.json({
+                success: true,
+                data: {
+                    namaDepan: '',
+                    namaBelakang: '',
+                    alamat: '',
+                    no_telp: ''
+                }
             });
         }
 
         res.json({
             success: true,
-            data: users[0]
+            data: profiles[0]
         });
 
     } catch (error) {
@@ -41,18 +48,40 @@ exports.getUserProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, phone } = req.body;
+        const { namaDepan, namaBelakang, alamat, no_telp } = req.body;
 
-        const [result] = await db.query(
-            'UPDATE users SET name = ?, phone = ? WHERE id = ?',
-            [name, phone, id]
+        if (!namaDepan || !alamat || !no_telp) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Nama depan, alamat, dan nomor telp wajib diisi' 
+            });
+        }
+
+        // Cek apakah profil sudah ada
+        const [existingProfile] = await db.query(
+            'SELECT idProfil FROM profilCustomer WHERE idUser = ?',
+            [id]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'User tidak ditemukan' 
-            });
+        if (existingProfile.length > 0) {
+            // Update existing profile
+            const [result] = await db.query(
+                'UPDATE profilCustomer SET namaDepan = ?, namaBelakang = ?, alamat = ?, no_telp = ? WHERE idUser = ?',
+                [namaDepan, namaBelakang || '-', alamat, no_telp, id]
+            );
+
+            if (result.affectedRows === 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Gagal update profil' 
+                });
+            }
+        } else {
+            // Insert new profile
+            await db.query(
+                'INSERT INTO profilCustomer (idUser, namaDepan, namaBelakang, alamat, no_telp) VALUES (?, ?, ?, ?, ?)',
+                [id, namaDepan, namaBelakang || '-', alamat, no_telp]
+            );
         }
 
         res.json({

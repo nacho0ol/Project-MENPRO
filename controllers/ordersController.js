@@ -5,74 +5,64 @@ const db = require('../config/database');
  */
 exports.createOrder = async (req, res) => {
     try {
-        const userId = req.body.userId;
-        const { shipping_address, payment_method } = req.body;
+        const { idUser, namaDepan, namaBelakang, no_telp, alamat, payment_method, items, ongkir } = req.body;
 
-        if (!userId || !shipping_address) {
+        if (!idUser || !namaDepan || !no_telp || !alamat || !items || items.length === 0) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'User ID dan shipping address wajib diisi' 
+                message: 'Data customer dan items wajib diisi' 
             });
         }
 
-        // Get cart user
-        const [cartItems] = await db.query(
-            'SELECT * FROM cart WHERE user_id = ?',
-            [userId]
-        );
-
-        if (cartItems.length === 0) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Cart kosong' 
-            });
+        // Hitung total belanja dari items
+        let totalBelanja = 0;
+        for (let item of items) {
+            totalBelanja += item.hargaSatuan * item.qtyPesanan;
         }
 
-        // Hitung total
-        let total = 0;
-        for (let item of cartItems) {
-            const [products] = await db.query(
-                'SELECT price FROM products WHERE id = ?',
-                [item.product_id]
+        const grandTotal = totalBelanja + (ongkir || 0);
+
+        // 1. Update atau Insert profil customer
+        try {
+            await db.query(
+                'UPDATE profilCustomer SET namaDepan = ?, namaBelakang = ?, no_telp = ?, alamat = ? WHERE idUser = ?',
+                [namaDepan, namaBelakang || '', no_telp, alamat, idUser]
             );
-            if (products.length > 0) {
-                total += products[0].price * item.quantity;
-            }
+        } catch (e) {
+            // Jika update gagal, coba insert
+            await db.query(
+                'INSERT INTO profilCustomer (idUser, namaDepan, namaBelakang, alamat, no_telp) VALUES (?, ?, ?, ?, ?)',
+                [idUser, namaDepan, namaBelakang || '', alamat, no_telp]
+            );
         }
 
-        // Create order
+        // 2. Create pemesanan
         const [orderResult] = await db.query(
-            'INSERT INTO orders (user_id, total, shipping_address, payment_method, status) VALUES (?, ?, ?, ?, "pending")',
-            [userId, total, shipping_address, payment_method || 'cash']
+            'INSERT INTO Pemesanan (idUser, totalBelanja, ongkir, grandTotal, Status) VALUES (?, ?, ?, ?, "dipesan")',
+            [idUser, totalBelanja, ongkir || 0, grandTotal]
         );
 
-        const orderId = orderResult.insertId;
+        const idPemesanan = orderResult.insertId;
 
-        // Insert order items
-        for (let item of cartItems) {
-            const [products] = await db.query(
-                'SELECT price FROM products WHERE id = ?',
-                [item.product_id]
+        // 3. Insert item pemesanan
+        for (let item of items) {
+            const subtotal = item.hargaSatuan * item.qtyPesanan;
+            
+            await db.query(
+                'INSERT INTO ItemPemesanan (idPemesanan, idProduk, qtyPesanan, hargaSatuan, subtotal) VALUES (?, ?, ?, ?, ?)',
+                [idPemesanan, item.idProduk, item.qtyPesanan, item.hargaSatuan, subtotal]
             );
-
-            if (products.length > 0) {
-                await db.query(
-                    'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
-                    [orderId, item.product_id, item.quantity, products[0].price]
-                );
-            }
         }
-
-        // Clear cart
-        await db.query('DELETE FROM cart WHERE user_id = ?', [userId]);
 
         res.status(201).json({
             success: true,
             message: 'Order berhasil dibuat',
             data: {
-                order_id: orderId,
-                total: total,
-                status: 'pending'
+                idPemesanan: idPemesanan,
+                totalBelanja: totalBelanja,
+                ongkir: ongkir || 0,
+                grandTotal: grandTotal,
+                status: 'dipesan'
             }
         });
 

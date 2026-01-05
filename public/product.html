@@ -53,36 +53,76 @@
     </div>
 
     <script>
-        // 1. Tangkap Data dari Link URL (index.html)
+        // 1. Tangkap ID Produk dari URL
         const params = new URLSearchParams(window.location.search);
-        const name = params.get('name') || 'Sirloin Premium'; // Default kalo ga ada data
-        const price = params.get('price') || '140000';
-        const img = params.get('img') || 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80';
+        const productId = params.get('id');
+        
+        // Data produk global
+        let productData = {
+            idProduk: null,
+            namaProduk: 'Loading...',
+            harga: 0,
+            filepath: 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80'
+        };
 
-        // 2. Tampilkan Data ke Layar
-        document.getElementById('namaProduk').innerText = name;
-        document.getElementById('hargaProduk').innerHTML = 'Rp ' + parseInt(price).toLocaleString('id-ID');
-        document.getElementById('imgProduk').src = img;
+        // 2. Fetch data produk dari API
+        async function loadProductDetail() {
+            if (!productId) {
+                // Fallback jika tidak ada ID
+                displayProduct();
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/products/${productId}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    productData = result.data;
+                    displayProduct();
+                } else {
+                    alert('Produk tidak ditemukan');
+                    window.location.href = 'index.html#katalog';
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+                alert('Gagal memuat produk');
+                window.location.href = 'index.html#katalog';
+            }
+        }
 
-        // 3. Logic Tambah Kurang Jumlah
+        // 3. Tampilkan data produk ke layar
+        function displayProduct() {
+            document.getElementById('namaProduk').innerText = productData.namaProduk;
+            document.getElementById('hargaProduk').innerHTML = 'Rp ' + parseInt(productData.harga).toLocaleString('id-ID') + ' <small>/ pack</small>';
+            document.getElementById('imgProduk').src = productData.filepath;
+        }
+
+        // 4. Logic Tambah Kurang Jumlah
         let qty = 1;
         const display = document.getElementById('angka');
         function tambah() { qty++; display.innerText = qty; }
         function kurang() { if (qty > 1) { qty--; display.innerText = qty; } }
 
-        // 4. Logic Masukkan ke Keranjang (LocalStorage)
+        // 5. Logic Masukkan ke Keranjang (LocalStorage)
         function addToCart() {
             // Ambil data keranjang lama (kalau ada)
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             
             // Cek apakah produk sudah ada di cart?
-            let existingItem = cart.find(item => item.name === name);
+            let existingItem = cart.find(item => item.idProduk === productData.idProduk);
             
             if (existingItem) {
                 existingItem.qty += qty; // Kalau ada, tambah jumlahnya aja
             } else {
                 // Kalau belum ada, masukkan sebagai item baru
-                cart.push({ name: name, price: price, img: img, qty: qty });
+                cart.push({ 
+                    idProduk: productData.idProduk,
+                    name: productData.namaProduk, 
+                    price: productData.harga, 
+                    img: productData.filepath, 
+                    qty: qty 
+                });
             }
 
             // Simpan balik ke LocalStorage
@@ -91,6 +131,9 @@
             alert('Berhasil masuk keranjang! 🛒');
             window.location.href = 'cart.html'; // Pindah ke halaman cart
         }
+
+        // Load produk saat halaman terbuka
+        document.addEventListener('DOMContentLoaded', loadProductDetail);
     </script>
 </body>
 </html>

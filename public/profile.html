@@ -105,17 +105,17 @@
                         <h2>Edit Profil</h2>
                         <p style="color: #666;">Perbarui informasi akun Anda di sini.</p>
                     </div>
-                    <form>
+                    <form id="profileForm">
                       <div class="form-grid">
-                        <div class="form-group"><label>Nama Depan</label><input type="text" value="Lorem" /></div>
-                        <div class="form-group"><label>Nama Belakang</label><input type="text" value="Ipsum" /></div>
+                        <div class="form-group"><label>Nama Depan</label><input type="text" id="namaDepan" placeholder="Nama depan Anda" /></div>
+                        <div class="form-group"><label>Nama Belakang</label><input type="text" id="namaBelakang" placeholder="Nama belakang Anda" /></div>
                       </div>
-                      <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Alamat Pengiriman</label><input type="text" value="Jl. Kaliurang Km 5, Yogyakarta" /></div>
+                      <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Alamat Pengiriman</label><input type="text" id="alamat" placeholder="Alamat lengkap Anda" /></div>
                       <div class="form-grid">
-                          <div class="form-group"><label><i class="fab fa-whatsapp"></i> No. WhatsApp</label><input type="text" value="08123456789" /></div>
-                          <div class="form-group"><label>Email</label><input type="email" value="lorem@email.com" /></div>
+                          <div class="form-group"><label><i class="fab fa-whatsapp"></i> No. WhatsApp</label><input type="text" id="no_telp" placeholder="08xxxxxxxxxx" /></div>
+                          <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="email@example.com" readonly /></div>
                       </div>
-                      <button type="button" class="btn-save" onclick="alert('Profil berhasil disimpan!')"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                      <button type="button" class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> Simpan Perubahan</button>
                     </form>
                 </div>
 
@@ -134,7 +134,105 @@
     </div>
 
     <script>
-        // 1. Fungsi Ganti Tab
+        // ========== DATA PROFIL USER ==========
+        let currentUser = null;
+
+        // 1. Load User & Profil saat halaman dibuka
+        async function loadUserProfile() {
+            try {
+                // Ambil user data dari sessionStorage/localStorage
+                const userSession = sessionStorage.getItem('user');
+                const userLocal = localStorage.getItem('user');
+                const userData = JSON.parse(userSession || userLocal || '{}');
+                
+                console.log('User Data:', userData);
+                console.log('Session:', userSession);
+                console.log('Local:', userLocal);
+
+                if (!userData.idUser && !userData.id) {
+                    // Jika tidak ada user, redirect ke login
+                    alert('Anda harus login terlebih dahulu');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                currentUser = userData;
+                const idUser = userData.idUser || userData.id;
+
+                // Update user greeting
+                document.querySelector('.user-card h4').innerText = `Halo, ${userData.username || 'User'}!`;
+
+                // Fetch profil customer dari API
+                try {
+                    const response = await fetch(`/api/users/${idUser}`);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const profil = result.data;
+                        document.getElementById('namaDepan').value = profil.namaDepan || '';
+                        document.getElementById('namaBelakang').value = profil.namaBelakang || '';
+                        document.getElementById('alamat').value = profil.alamat || '';
+                        document.getElementById('no_telp').value = profil.no_telp || '';
+                        document.getElementById('email').value = userData.email || '';
+                    }
+                } catch (e) {
+                    // Jika endpoint tidak ada, isikan field kosong
+                    document.getElementById('email').value = userData.email || '';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Gagal memuat profil');
+            }
+        }
+
+        // 2. Fungsi Save Profile
+        async function saveProfile() {
+            try {
+                const namaDepan = document.getElementById('namaDepan').value.trim();
+                const namaBelakang = document.getElementById('namaBelakang').value.trim();
+                const alamat = document.getElementById('alamat').value.trim();
+                const no_telp = document.getElementById('no_telp').value.trim();
+
+                if (!namaDepan || !alamat || !no_telp) {
+                    alert('Nama depan, alamat, dan nomor telp wajib diisi');
+                    return;
+                }
+
+                const idUser = currentUser.idUser || currentUser.id;
+
+                // Prepare data untuk update
+                const updateData = {
+                    namaDepan: namaDepan,
+                    namaBelakang: namaBelakang || '-',
+                    alamat: alamat,
+                    no_telp: no_telp
+                };
+
+                // POST ke API untuk update profil
+                const response = await fetch(`/api/users/${idUser}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✓ Profil berhasil disimpan!');
+                } else {
+                    alert('❌ Gagal menyimpan profil: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('❌ Terjadi kesalahan saat menyimpan profil');
+            }
+        }
+
+        // ========== RIWAYAT PESANAN ==========
+        
+        // 3. Fungsi Ganti Tab
         function switchTab(tabName) {
             // Sembunyikan semua tab
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -145,7 +243,7 @@
             document.getElementById('menu-' + tabName).classList.add('active');
         }
 
-        // 2. Fungsi Load History
+        // 4. Fungsi Load History
         const historyContainer = document.getElementById('history-container');
         const orders = JSON.parse(localStorage.getItem('orderHistory')) || [];
 
@@ -184,6 +282,9 @@
                 `;
             });
         }
+
+        // Load profile saat halaman terbuka
+        document.addEventListener('DOMContentLoaded', loadUserProfile);
     </script>
 </body>
 </html>

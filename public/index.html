@@ -57,52 +57,8 @@
 
       <section id="katalog">
         <h2 class="section-title">Pilihan Terbaik</h2>
-        <div class="product-grid">
-          
-          <a href="product.html?name=Sirloin%20Premium&price=140000&img=https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=500&q=60" class="product-card">
-            <img
-              src="https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=500&q=60"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
-            <div class="card-info">
-              <div class="card-title">Sirloin Premium</div>
-              <div class="card-price">Rp 140.000</div>
-            </div>
-          </a>
-
-          <a href="product.html?name=Iga%20Sapi%20(Ribs)&price=196000&img=https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&w=500&q=60" class="product-card">
-            <img
-              src="https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&w=500&q=60"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
-            <div class="card-info">
-              <div class="card-title">Iga Sapi (Ribs)</div>
-              <div class="card-price">Rp 196.000</div>
-            </div>
-          </a>
-
-          <a href="product.html?name=Hati%20Sapi%20Segar&price=40000&img=https://images.unsplash.com/photo-1615937651187-8c489680b9b0?auto=format&fit=crop&w=500&q=60" class="product-card">
-            <img
-              src="https://images.unsplash.com/photo-1615937651187-8c489680b9b0?auto=format&fit=crop&w=500&q=60"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
-            <div class="card-info">
-              <div class="card-title">Hati Sapi Segar</div>
-              <div class="card-price">Rp 40.000</div>
-            </div>
-          </a>
-
-           <a href="product.html?name=Oxtail%20Super&price=180000&img=https://images.unsplash.com/photo-1551028716-43a595d7b51b?auto=format&fit=crop&w=500&q=60" class="product-card">
-            <img
-              src="https://images.unsplash.com/photo-1551028716-43a595d7b51b?auto=format&fit=crop&w=500&q=60"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
-            <div class="card-info">
-              <div class="card-title">Oxtail Super</div>
-              <div class="card-price">Rp 180.000</div>
-            </div>
-          </a>
-
+        <div class="product-grid" id="productGrid">
+          <p style="text-align: center; grid-column: 1/-1; padding: 40px;">Memuat produk...</p>
         </div>
       </section>
 
@@ -155,5 +111,44 @@
             &copy; 2024 Olivia Meat. Dibuat dengan sepenuh hati.
         </div>
     </footer>
+
+    <script>
+      // Fetch semua produk dari database via API
+      async function loadProducts() {
+        try {
+          const response = await fetch('/api/products');
+          const result = await response.json();
+          
+          if (result.success && result.data && result.data.length > 0) {
+            const productGrid = document.getElementById('productGrid');
+            productGrid.innerHTML = ''; // Hapus loading text
+            
+            result.data.forEach(product => {
+              const imgUrl = product.filepath || 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=500&q=60';
+              
+              const productCard = document.createElement('a');
+              productCard.href = `product.html?id=${product.idProduk}`;
+              productCard.className = 'product-card';
+              productCard.innerHTML = `
+                <img src="${imgUrl}" style="width: 100%; height: 200px; object-fit: cover" alt="${product.namaProduk}" />
+                <div class="card-info">
+                  <div class="card-title">${product.namaProduk}</div>
+                  <div class="card-price">Rp ${parseInt(product.harga).toLocaleString('id-ID')}</div>
+                </div>
+              `;
+              productGrid.appendChild(productCard);
+            });
+          } else {
+            document.getElementById('productGrid').innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">Produk tidak tersedia</p>';
+          }
+        } catch (error) {
+          console.error('Error loading products:', error);
+          document.getElementById('productGrid').innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px; color: red;">Gagal memuat produk</p>';
+        }
+      }
+      
+      // Load produk saat halaman terbuka
+      document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
   </body>
 </html>
