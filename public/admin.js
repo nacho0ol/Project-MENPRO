@@ -14,7 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAdd = document.querySelector('.btn-add');
     if(btnAdd) {
         btnAdd.addEventListener('click', () => {
+            // Clear the add-product form so previous inputs don't persist
+            const form = document.getElementById('addProductForm');
+            if (form) form.reset();
+            // Ensure inputs are empty (reset covers most cases but do explicit clearing)
+            ['p_nama','p_harga','p_stok','p_gambar','p_deskripsi'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.value = '';
+            });
             document.getElementById('addProductModal').style.display = 'block';
+            const first = document.getElementById('p_nama');
+            if(first) first.focus();
         });
     }
 
