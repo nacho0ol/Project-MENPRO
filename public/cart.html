@@ -1,55 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Keranjang - Olivia Meat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <title>Keranjang - Olivia Meat N Fresh</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
-    
+
     <style>
-        .cart-header {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: #fff;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .cart-checkbox {
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      .cart-header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #fff;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
 
-        /* Ukuran Checkbox */
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #ff4d4d; /* Warna merah sesuai tema */
-        }
+      .cart-checkbox {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        /* Penyesuaian agar checkbox sejajar dengan item */
-        .cart-item {
-            display: flex;
-            align-items: center; 
-        }
+      /* Ukuran Checkbox */
+      input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #ff4d4d; /* Warna merah sesuai tema */
+      }
 
-        .cart-img {
-            margin-left: 0; 
-        }
+      /* Penyesuaian agar checkbox sejajar dengan item */
+      .cart-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .cart-img {
+        margin-left: 0;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <nav class="navbar">
       <div class="container nav-content">
-        <a href="index.html" class="logo"><img src="logo.png" alt="Logo"><span>Olivia Meat</span></a>
+        <a href="index.html" class="logo"
+          ><img src="uploads/LOGO.png" alt="Logo" /><span
+            >Olivia Meat N Fresh</span
+          ></a
+        >
         <div class="nav-links">
           <a href="index.html#katalog">Produk</a>
           <a href="index.html#tentang">Tentang Kami</a>
@@ -58,106 +67,138 @@
         <div class="nav-icons">
           <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
           <a href="profile.html"><i class="fas fa-user"></i></a>
-          <a href="login.html" class="logout-btn" onclick="return confirm('Yakin ingin keluar?')"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+          <a
+            href="login.html"
+            class="logout-btn"
+            onclick="return confirm('Yakin ingin keluar?')"
+            ><i class="fas fa-sign-out-alt"></i> Keluar</a
+          >
         </div>
       </div>
     </nav>
 
     <div class="container cart-page">
-        <div class="cart-title-wrapper">
-            <h2>Keranjang Belanja</h2>
-            <span style="color: #666;" id="totalItems">0 Item Terpilih</span>
+      <div class="cart-title-wrapper">
+        <h2>Keranjang Belanja</h2>
+        <span style="color: #666" id="totalItems">0 Item Terpilih</span>
+      </div>
+
+      <div class="cart-grid">
+        <div class="cart-left-section">
+          <div class="cart-header" id="cartHeader" style="display: none">
+            <div class="cart-checkbox">
+              <input
+                type="checkbox"
+                id="selectAll"
+                onclick="pilihSemua(this)"
+              />
+            </div>
+            <label
+              for="selectAll"
+              style="cursor: pointer; font-weight: 600; flex: 1"
+              >Pilih Semua Produk</label
+            >
+          </div>
+
+          <div class="cart-items" id="cartContainer">
+            <p>Memuat keranjang...</p>
+          </div>
         </div>
 
-        <div class="cart-grid">
-            <div class="cart-left-section">
-                <div class="cart-header" id="cartHeader" style="display:none;">
-                    <div class="cart-checkbox">
-                        <input type="checkbox" id="selectAll" onclick="pilihSemua(this)">
-                    </div>
-                    <label for="selectAll" style="cursor:pointer; font-weight:600; flex:1;">Pilih Semua Produk</label>
-                </div>
+        <div class="cart-summary">
+          <h3>Ringkasan Pesanan</h3>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="subTotal">Rp 0</span>
+          </div>
+          <div class="summary-row">
+            <span>Biaya Layanan</span>
+            <span id="serviceFee">Rp 0</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total Tagihan</span>
+            <span id="finalTotal">Rp 0</span>
+          </div>
 
-                <div class="cart-items" id="cartContainer">
-                    <p>Memuat keranjang...</p>
-                </div>
-            </div>
+          <button
+            onclick="hapusSemua()"
+            style="
+              width: 100%;
+              padding: 10px;
+              border: none;
+              background: #eee;
+              cursor: pointer;
+              margin-top: 10px;
+              border-radius: 5px;
+              color: #ff4d4d;
+            "
+          >
+            Hapus Semua Barang
+          </button>
 
-            <div class="cart-summary">
-                <h3>Ringkasan Pesanan</h3>
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span id="subTotal">Rp 0</span>
-                </div>
-                <div class="summary-row">
-                    <span>Biaya Layanan</span>
-                    <span id="serviceFee">Rp 0</span>
-                </div>
-                <div class="summary-row total">
-                    <span>Total Tagihan</span>
-                    <span id="finalTotal">Rp 0</span>
-                </div>
-                
-                <button onclick="hapusSemua()" style="width:100%; padding:10px; border:none; background:#eee; cursor:pointer; margin-top:10px; border-radius:5px; color:#ff4d4d;">Hapus Semua Barang</button>
-                
-                <button onclick="cekCheckout()" class="btn-checkout">
-                    <i class="fas fa-lock"></i> Checkout (<span id="countCheckout">0</span>)
-                </button>
-            </div>
+          <button onclick="cekCheckout()" class="btn-checkout">
+            <i class="fas fa-lock"></i> Checkout (<span id="countCheckout"
+              >0</span
+            >)
+          </button>
         </div>
+      </div>
     </div>
 
     <script>
-        // 1. Ambil Data dari LocalStorage
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        
-        // Normalisasi data: Pastikan setiap item punya status 'selected' (default true/tercentang)
-        cart = cart.map(item => ({
-            ...item,
-            selected: item.hasOwnProperty('selected') ? item.selected : true
-        }));
+      // 1. Ambil Data dari LocalStorage
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        // Seleksi Element HTML
-        const container = document.getElementById('cartContainer');
-        const cartHeader = document.getElementById('cartHeader');
-        const selectAllBox = document.getElementById('selectAll');
-        
-        const totalItemsLabel = document.getElementById('totalItems');
-        const countCheckoutLabel = document.getElementById('countCheckout');
-        const subTotalLabel = document.getElementById('subTotal');
-        const serviceFeeLabel = document.getElementById('serviceFee');
-        const finalTotalLabel = document.getElementById('finalTotal');
+      // Normalisasi data: Pastikan setiap item punya status 'selected' (default true/tercentang)
+      cart = cart.map((item) => ({
+        ...item,
+        selected: item.hasOwnProperty("selected") ? item.selected : true,
+      }));
 
-        // 2. Fungsi Render (Tampilkan Barang + Checkbox)
-        function renderCart() {
-            container.innerHTML = ''; 
-            let subTotal = 0;
-            let totalQtySelected = 0;
-            let allSelected = true; 
-            let hasItem = cart.length > 0;
+      // Seleksi Element HTML
+      const container = document.getElementById("cartContainer");
+      const cartHeader = document.getElementById("cartHeader");
+      const selectAllBox = document.getElementById("selectAll");
 
-            if (!hasItem) {
-                container.innerHTML = '<p style="text-align:center; padding:20px;">Keranjang kosong. Yuk belanja dulu! 🥩</p>';
-                cartHeader.style.display = 'none';
-                allSelected = false;
-            } else {
-                cartHeader.style.display = 'flex';
-                
-                cart.forEach((item, index) => {
-                    // Cek apakah item ini merusak status "Pilih Semua"
-                    if (!item.selected) allSelected = false;
+      const totalItemsLabel = document.getElementById("totalItems");
+      const countCheckoutLabel = document.getElementById("countCheckout");
+      const subTotalLabel = document.getElementById("subTotal");
+      const serviceFeeLabel = document.getElementById("serviceFee");
+      const finalTotalLabel = document.getElementById("finalTotal");
 
-                    // Hitung Subtotal HANYA jika item dipilih (dicentang)
-                    if (item.selected) {
-                        subTotal += item.price * item.qty;
-                        totalQtySelected += item.qty;
-                    }
+      // 2. Fungsi Render (Tampilkan Barang + Checkbox)
+      function renderCart() {
+        container.innerHTML = "";
+        let subTotal = 0;
+        let totalQtySelected = 0;
+        let allSelected = true;
+        let hasItem = cart.length > 0;
 
-                    // Tampilkan HTML Item
-                    container.innerHTML += `
+        if (!hasItem) {
+          container.innerHTML =
+            '<p style="text-align:center; padding:20px;">Keranjang kosong. Yuk belanja dulu! 🥩</p>';
+          cartHeader.style.display = "none";
+          allSelected = false;
+        } else {
+          cartHeader.style.display = "flex";
+
+          cart.forEach((item, index) => {
+            // Cek apakah item ini merusak status "Pilih Semua"
+            if (!item.selected) allSelected = false;
+
+            // Hitung Subtotal HANYA jika item dipilih (dicentang)
+            if (item.selected) {
+              subTotal += item.price * item.qty;
+              totalQtySelected += item.qty;
+            }
+
+            // Tampilkan HTML Item
+            container.innerHTML += `
                         <div class="cart-item">
                             <div class="cart-checkbox">
-                                <input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleItem(${index})">
+                                <input type="checkbox" ${
+                                  item.selected ? "checked" : ""
+                                } onchange="toggleItem(${index})">
                             </div>
 
                             <div class="cart-img">
@@ -165,7 +206,9 @@
                             </div>
                             <div class="cart-details">
                                 <h4>${item.name}</h4>
-                                <p class="price">Rp ${parseInt(item.price).toLocaleString('id-ID')}</p>
+                                <p class="price">Rp ${parseInt(
+                                  item.price
+                                ).toLocaleString("id-ID")}</p>
                             </div>
                             
                             <div class="qty-box" style="margin: 0;">
@@ -177,81 +220,81 @@
                             <button class="btn-remove" onclick="hapusItem(${index})" title="Hapus"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     `;
-                });
-            }
-
-            // Update status checkbox "Pilih Semua"
-            selectAllBox.checked = hasItem && allSelected;
-
-            // Hitung Biaya Layanan (Jika subtotal 0, biaya layanan 0)
-            let serviceFee = subTotal > 0 ? 2000 : 0;
-            let finalTotal = subTotal + serviceFee;
-
-            // Update Tampilan Angka di Halaman
-            totalItemsLabel.innerText = totalQtySelected + ' Item Terpilih';
-            countCheckoutLabel.innerText = totalQtySelected;
-            subTotalLabel.innerText = 'Rp ' + subTotal.toLocaleString('id-ID');
-            serviceFeeLabel.innerText = 'Rp ' + serviceFee.toLocaleString('id-ID');
-            finalTotalLabel.innerText = 'Rp ' + finalTotal.toLocaleString('id-ID');
-            
-            // Simpan perubahan state (centang/tidak) ke LocalStorage
-            localStorage.setItem('cart', JSON.stringify(cart));
+          });
         }
 
-        // 3. Fungsi Toggle Checkbox Per Item
-        function toggleItem(index) {
-            cart[index].selected = !cart[index].selected;
-            renderCart();
-        }
+        // Update status checkbox "Pilih Semua"
+        selectAllBox.checked = hasItem && allSelected;
 
-        // 4. Fungsi Pilih Semua / Hapus Pilihan Semua
-        function pilihSemua(source) {
-            let status = source.checked;
-            cart.forEach(item => item.selected = status);
-            renderCart();
-        }
+        // Hitung Biaya Layanan (Jika subtotal 0, biaya layanan 0)
+        let serviceFee = subTotal > 0 ? 2000 : 0;
+        let finalTotal = subTotal + serviceFee;
 
-        // 5. Fungsi Ubah Jumlah (+ / -)
-        function ubahQty(index, change) {
-            if (cart[index].qty === 1 && change === -1) return;
-            cart[index].qty += change;
-            renderCart(); 
-        }
+        // Update Tampilan Angka di Halaman
+        totalItemsLabel.innerText = totalQtySelected + " Item Terpilih";
+        countCheckoutLabel.innerText = totalQtySelected;
+        subTotalLabel.innerText = "Rp " + subTotal.toLocaleString("id-ID");
+        serviceFeeLabel.innerText = "Rp " + serviceFee.toLocaleString("id-ID");
+        finalTotalLabel.innerText = "Rp " + finalTotal.toLocaleString("id-ID");
 
-        // 6. Fungsi Hapus Per Item
-        function hapusItem(index) {
-            if(confirm("Hapus produk ini dari keranjang?")) {
-                cart.splice(index, 1);
-                renderCart();
-            }
-        }
+        // Simpan perubahan state (centang/tidak) ke LocalStorage
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
 
-        // 7. Fungsi Hapus Semua (Kosongkan Keranjang)
-        function hapusSemua() {
-            if(cart.length > 0 && confirm("Yakin mau kosongkan keranjang?")) {
-                localStorage.removeItem('cart');
-                cart = [];
-                renderCart();
-            }
-        }
-
-        // 8. Fungsi Cek Checkout
-        function cekCheckout() {
-            // Filter barang yang dicentang saja
-            const itemDipilih = cart.filter(item => item.selected);
-
-            if (cart.length === 0) {
-                alert("Keranjang masih kosong.");
-            } else if (itemDipilih.length === 0) {
-                alert("Silakan centang minimal satu produk untuk checkout! ☑️");
-            } else {
-                // Lanjut ke halaman checkout
-                window.location.href = 'checkout.html';
-            }
-        }
-
-        // Jalankan saat halaman dibuka
+      // 3. Fungsi Toggle Checkbox Per Item
+      function toggleItem(index) {
+        cart[index].selected = !cart[index].selected;
         renderCart();
+      }
+
+      // 4. Fungsi Pilih Semua / Hapus Pilihan Semua
+      function pilihSemua(source) {
+        let status = source.checked;
+        cart.forEach((item) => (item.selected = status));
+        renderCart();
+      }
+
+      // 5. Fungsi Ubah Jumlah (+ / -)
+      function ubahQty(index, change) {
+        if (cart[index].qty === 1 && change === -1) return;
+        cart[index].qty += change;
+        renderCart();
+      }
+
+      // 6. Fungsi Hapus Per Item
+      function hapusItem(index) {
+        if (confirm("Hapus produk ini dari keranjang?")) {
+          cart.splice(index, 1);
+          renderCart();
+        }
+      }
+
+      // 7. Fungsi Hapus Semua (Kosongkan Keranjang)
+      function hapusSemua() {
+        if (cart.length > 0 && confirm("Yakin mau kosongkan keranjang?")) {
+          localStorage.removeItem("cart");
+          cart = [];
+          renderCart();
+        }
+      }
+
+      // 8. Fungsi Cek Checkout
+      function cekCheckout() {
+        // Filter barang yang dicentang saja
+        const itemDipilih = cart.filter((item) => item.selected);
+
+        if (cart.length === 0) {
+          alert("Keranjang masih kosong.");
+        } else if (itemDipilih.length === 0) {
+          alert("Silakan centang minimal satu produk untuk checkout! ☑️");
+        } else {
+          // Lanjut ke halaman checkout
+          window.location.href = "checkout.html";
+        }
+      }
+
+      // Jalankan saat halaman dibuka
+      renderCart();
     </script>
-</body>
+  </body>
 </html>
