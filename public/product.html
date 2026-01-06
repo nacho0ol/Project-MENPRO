@@ -60,18 +60,21 @@
         const params = new URLSearchParams(window.location.search);
         const productId = params.get('id');
         
+        // Link gambar default (Foto Daging Sapi) untuk jaga-jaga
+        const defaultImage = 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80';
+
         // Data produk global
         let productData = {
             idProduk: null,
             namaProduk: 'Loading...',
             harga: 0,
-            filepath: 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80'
+            filepath: defaultImage
         };
 
         // 2. Fetch data produk dari API
         async function loadProductDetail() {
             if (!productId) {
-                displayProduct();
+                displayProduct(); // Tampilkan data default kalau tidak ada ID
                 return;
             }
             
@@ -96,12 +99,10 @@
         // 3. Tampilkan data produk ke layar
         function displayProduct() {
             document.getElementById('namaProduk').innerText = productData.namaProduk;
-            // PERBAIKAN: Update tampilan harga menjadi / kg di script juga
             document.getElementById('hargaProduk').innerHTML = 'Rp ' + parseInt(productData.harga).toLocaleString('id-ID') + ' <small>/ kg</small>';
             
-            // PERBAIKAN: Handling gambar lebih aman
-            // Jika filepath ada isinya, pakai itu. Jika tidak, pakai gambar default unsplash.
-            const imageUrl = productData.filepath ? productData.filepath : 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80';
+            // Cek apakah ada gambar dari database? Kalau tidak, pakai default.
+            const imageUrl = (productData.filepath && productData.filepath !== '') ? productData.filepath : defaultImage;
             document.getElementById('imgProduk').src = imageUrl;
         }
 
@@ -116,15 +117,19 @@
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let existingItem = cart.find(item => item.idProduk === productData.idProduk);
             
+            // PERBAIKAN: Tentukan gambar yang mau disimpan (Gunakan default jika database kosong)
+            const imageToSave = (productData.filepath && productData.filepath !== '') ? productData.filepath : defaultImage;
+
             if (existingItem) {
-                existingItem.qty += qty; 
+                // PERBAIKAN: Gunakan parseInt agar dijumlahkan sebagai angka (Matematika)
+                existingItem.qty = parseInt(existingItem.qty) + parseInt(qty);
             } else {
                 cart.push({ 
                     idProduk: productData.idProduk,
                     name: productData.namaProduk, 
-                    price: productData.harga, 
-                    img: productData.filepath, 
-                    qty: qty 
+                    price: parseInt(productData.harga), 
+                    img: imageToSave, // Simpan gambar yang aman
+                    qty: parseInt(qty) 
                 });
             }
 
