@@ -4,10 +4,16 @@ let productsData = [];
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Cek Login
     const userRole = localStorage.getItem('userRole');
+    const username = localStorage.getItem('username');
     if (userRole !== 'Admin') {
         alert("Akses Ditolak!");
         window.location.href = 'login.html';
         return;
+    }
+
+    // Display admin username
+    if(username) {
+        document.getElementById('adminUsername').innerText = username;
     }
 
     // 2. Setup Tombol Tambah Produk (Lama)

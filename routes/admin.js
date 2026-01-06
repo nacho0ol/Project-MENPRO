@@ -145,10 +145,19 @@ router.put('/products/:id', async (req, res) => {
         const { id } = req.params;
         const { namaProduk, harga, deskripsi, filepath } = req.body;
 
-        const [result] = await db.query(
-            'UPDATE Produk SET namaProduk = ?, harga = ?, deskripsi = ?, filepath = ? WHERE idProduk = ?',
-            [namaProduk, harga, deskripsi, filepath, id]
-        );
+        // Jika filepath tidak diberikan, jangan update field filepath
+        let query = 'UPDATE Produk SET namaProduk = ?, harga = ?, deskripsi = ?';
+        let params = [namaProduk, harga, deskripsi];
+        
+        if(filepath) {
+            query += ', filepath = ?';
+            params.push(filepath);
+        }
+        
+        query += ' WHERE idProduk = ?';
+        params.push(id);
+
+        const [result] = await db.query(query, params);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
@@ -362,10 +371,18 @@ router.put('/orders/:id/status', async (req, res) => {
             });
         }
 
-        const [result] = await db.query(
-            'UPDATE Pemesanan SET Status = ? WHERE idPemesanan = ?',
-            [status, id]
-        );
+        // Jika status berubah menjadi 'dikirim', set tanggalDikirim dengan tanggal hari ini
+        let query = 'UPDATE Pemesanan SET Status = ?';
+        let params = [status];
+        
+        if(status === 'dikirim') {
+            query += ', tanggalDikirim = CURDATE()';
+        }
+        
+        query += ' WHERE idPemesanan = ?';
+        params.push(id);
+
+        const [result] = await db.query(query, params);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
@@ -528,7 +545,27 @@ router.put('/users/:id', async (req, res) => {
 // DELETE USER (Endpoint ini bisa dipakai untuk tombol hapus di tabel User juga)
 router.delete('/users/:id', async (req, res) => {
     try {
-        await db.query('DELETE FROM User WHERE idUser = ?', [req.params.id]);
+        const { id } = req.params;
+
+        // Hapus item pemesanan terlebih dahulu
+        await db.query('DELETE FROM ItemPemesanan WHERE idPemesanan IN (SELECT idPemesanan FROM Pemesanan WHERE idUser = ?)', [id]);
+        
+        // Hapus pemesanan
+        await db.query('DELETE FROM Pemesanan WHERE idUser = ?', [id]);
+        
+        // Hapus profil customer
+        await db.query('DELETE FROM profilCustomer WHERE idUser = ?', [id]);
+        
+        // Hapus user
+        const [result] = await db.query('DELETE FROM User WHERE idUser = ?', [id]);
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'User tidak ditemukan'
+            });
+        }
+        
         res.json({ success: true, message: 'User dihapus' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
