@@ -81,7 +81,7 @@ exports.createOrder = async (req, res) => {
  */
 exports.getUserOrders = async (req, res) => {
     try {
-        const userId = req.body.userId || req.query.userId;
+        const userId = req.query.userId || req.body?.userId;
 
         if (!userId) {
             return res.status(401).json({ 
@@ -90,10 +90,34 @@ exports.getUserOrders = async (req, res) => {
             });
         }
 
-        const [orders] = await db.query(
-            'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC',
-            [userId]
-        );
+        // Query orders dari table Pemesanan dengan join ke ItemPemesanan
+        const [orders] = await db.query(`
+            SELECT 
+                p.idPemesanan,
+                p.idUser,
+                p.tanggalPesan,
+                p.tanggalDikirim,
+                p.totalBelanja,
+                p.ongkir,
+                p.grandTotal,
+                p.Status,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'idItem', ip.idItem,
+                        'idProduk', ip.idProduk,
+                        'qtyPesanan', ip.qtyPesanan,
+                        'hargaSatuan', ip.hargaSatuan,
+                        'subtotal', ip.subtotal,
+                        'namaProduk', pr.namaProduk
+                    )
+                ) as items
+            FROM Pemesanan p
+            LEFT JOIN ItemPemesanan ip ON p.idPemesanan = ip.idPemesanan
+            LEFT JOIN Produk pr ON ip.idProduk = pr.idProduk
+            WHERE p.idUser = ?
+            GROUP BY p.idPemesanan
+            ORDER BY p.tanggalPesan DESC
+        `, [userId]);
 
         res.json({
             success: true,
@@ -117,7 +141,32 @@ exports.getOrderById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const [orders] = await db.query('SELECT * FROM orders WHERE id = ?', [id]);
+        const [orders] = await db.query(`
+            SELECT 
+                p.idPemesanan,
+                p.idUser,
+                p.tanggalPesan,
+                p.tanggalDikirim,
+                p.totalBelanja,
+                p.ongkir,
+                p.grandTotal,
+                p.Status,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'idItem', ip.idItem,
+                        'idProduk', ip.idProduk,
+                        'qtyPesanan', ip.qtyPesanan,
+                        'hargaSatuan', ip.hargaSatuan,
+                        'subtotal', ip.subtotal,
+                        'namaProduk', pr.namaProduk
+                    )
+                ) as items
+            FROM Pemesanan p
+            LEFT JOIN ItemPemesanan ip ON p.idPemesanan = ip.idPemesanan
+            LEFT JOIN Produk pr ON ip.idProduk = pr.idProduk
+            WHERE p.idPemesanan = ?
+            GROUP BY p.idPemesanan
+        `, [id]);
 
         if (orders.length === 0) {
             return res.status(404).json({ 
@@ -126,17 +175,9 @@ exports.getOrderById = async (req, res) => {
             });
         }
 
-        const [orderItems] = await db.query(
-            'SELECT oi.*, p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?',
-            [id]
-        );
-
         res.json({
             success: true,
-            data: {
-                ...orders[0],
-                items: orderItems
-            }
+            data: orders[0]
         });
 
     } catch (error) {
@@ -165,7 +206,7 @@ exports.updateOrder = async (req, res) => {
         }
 
         const [result] = await db.query(
-            'UPDATE orders SET status = ? WHERE id = ?',
+            'UPDATE Pemesanan SET Status = ? WHERE idPemesanan = ?',
             [status, id]
         );
 
@@ -199,8 +240,8 @@ exports.cancelOrder = async (req, res) => {
         const { id } = req.params;
 
         const [result] = await db.query(
-            'UPDATE orders SET status = "cancelled" WHERE id = ?',
-            [id]
+            'UPDATE Pemesanan SET Status = ? WHERE idPemesanan = ?',
+            ['Dibatalkan', id]
         );
 
         if (result.affectedRows === 0) {

@@ -24,6 +24,41 @@ router.put('/:id', usersController.updateUserProfile);
 router.put('/:id/password', usersController.changePassword);
 
 /**
+ * @route   GET /api/users/:id/addresses
+ * @desc    Get all addresses for user
+ * @access  Private
+ */
+router.get('/:id/addresses', usersController.getUserAddresses);
+
+/**
+ * @route   GET /api/users/:id/addresses/:addrId
+ * @desc    Get specific address
+ * @access  Private
+ */
+router.get('/:id/addresses/:addrId', usersController.getAddressById);
+
+/**
+ * @route   POST /api/users/:id/addresses
+ * @desc    Create new address
+ * @access  Private
+ */
+router.post('/:id/addresses', usersController.createAddress);
+
+/**
+ * @route   PUT /api/users/:id/addresses/:addrId
+ * @desc    Update address
+ * @access  Private
+ */
+router.put('/:id/addresses/:addrId', usersController.updateAddress);
+
+/**
+ * @route   DELETE /api/users/:id/addresses/:addrId
+ * @desc    Delete address
+ * @access  Private
+ */
+router.delete('/:id/addresses/:addrId', usersController.deleteAddress);
+
+/**
  * @route   GET /api/users (admin only)
  * @desc    Get semua users
  * @access  Private/Admin

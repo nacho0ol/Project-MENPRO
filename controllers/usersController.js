@@ -183,6 +183,181 @@ exports.getAllUsers = async (req, res) => {
 };
 
 /**
+ * Get all addresses for user
+ */
+exports.getUserAddresses = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [addresses] = await db.query(
+            'SELECT idAlamat, namaPenerima, noTelp, alamat, labelAlamat, created_at FROM AlamatUser WHERE idUser = ? ORDER BY created_at DESC',
+            [id]
+        );
+
+        res.json({
+            success: true,
+            data: addresses
+        });
+
+    } catch (error) {
+        console.error('Get User Addresses Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan',
+            error: error.message 
+        });
+    }
+};
+
+/**
+ * Get specific address by ID
+ */
+exports.getAddressById = async (req, res) => {
+    try {
+        const { id, addrId } = req.params;
+
+        const [address] = await db.query(
+            'SELECT idAlamat, namaPenerima, noTelp, alamat, labelAlamat FROM AlamatUser WHERE idAlamat = ? AND idUser = ?',
+            [addrId, id]
+        );
+
+        if (address.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Alamat tidak ditemukan'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: address[0]
+        });
+
+    } catch (error) {
+        console.error('Get Address Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan',
+            error: error.message 
+        });
+    }
+};
+
+/**
+ * Create new address
+ */
+exports.createAddress = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { namaPenerima, noTelp, alamat, labelAlamat } = req.body;
+
+        if (!namaPenerima || !noTelp || !alamat) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nama penerima, nomor telp, dan alamat wajib diisi'
+            });
+        }
+
+        const [result] = await db.query(
+            'INSERT INTO AlamatUser (idUser, namaPenerima, noTelp, alamat, labelAlamat) VALUES (?, ?, ?, ?, ?)',
+            [id, namaPenerima, noTelp, alamat, labelAlamat || null]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Alamat berhasil ditambahkan',
+            data: {
+                idAlamat: result.insertId
+            }
+        });
+
+    } catch (error) {
+        console.error('Create Address Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan',
+            error: error.message 
+        });
+    }
+};
+
+/**
+ * Update address
+ */
+exports.updateAddress = async (req, res) => {
+    try {
+        const { id, addrId } = req.params;
+        const { namaPenerima, noTelp, alamat, labelAlamat } = req.body;
+
+        if (!namaPenerima || !noTelp || !alamat) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nama penerima, nomor telp, dan alamat wajib diisi'
+            });
+        }
+
+        const [result] = await db.query(
+            'UPDATE AlamatUser SET namaPenerima = ?, noTelp = ?, alamat = ?, labelAlamat = ? WHERE idAlamat = ? AND idUser = ?',
+            [namaPenerima, noTelp, alamat, labelAlamat || null, addrId, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Alamat tidak ditemukan'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Alamat berhasil diperbarui'
+        });
+
+    } catch (error) {
+        console.error('Update Address Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan',
+            error: error.message 
+        });
+    }
+};
+
+/**
+ * Delete address
+ */
+exports.deleteAddress = async (req, res) => {
+    try {
+        const { id, addrId } = req.params;
+
+        const [result] = await db.query(
+            'DELETE FROM AlamatUser WHERE idAlamat = ? AND idUser = ?',
+            [addrId, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Alamat tidak ditemukan'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Alamat berhasil dihapus'
+        });
+
+    } catch (error) {
+        console.error('Delete Address Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan',
+            error: error.message 
+        });
+    }
+};
+
+/**
  * Delete user account (admin only)
  */
 exports.deleteUser = async (req, res) => {

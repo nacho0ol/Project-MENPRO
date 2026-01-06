@@ -76,11 +76,19 @@
                 </div>
 
                 <form id="checkoutForm" onsubmit="kirimPesanan(event)">
+                    <div class="section-title">Pilih Alamat Pengiriman</div>
+                    <div class="form-group">
+                        <label class="form-label">Alamat Tersimpan</label>
+                        <select id="savedAddresses" class="form-input" onchange="selectSavedAddress()">
+                            <option value="">-- Gunakan Alamat Baru --</option>
+                        </select>
+                    </div>
+                    
                     <div class="section-title">Data Pemesan</div>
                     <div class="form-group"><label class="form-label">Nama Lengkap (Contact)</label><input type="text" id="nama" class="form-input" placeholder="Masukkan nama Anda" required></div>
                     <div class="form-group"><label class="form-label">Nomor Telepon / WhatsApp (Ship to)</label><input type="tel" id="wa" class="form-input" placeholder="08xxxxxxxxxx" required></div>
                     <div class="form-group"><label class="form-label">Alamat Pengiriman</label><textarea id="alamat" class="form-input" placeholder="Alamat lengkap, patokan, dll" style="min-height: 80px;" required></textarea></div>
-                    <input type="checkbox" id="saveInfo"><label for="saveInfo" style="font-size: 0.85rem; color: #666; cursor: pointer;"> Simpan informasi ini</label>
+                    <input type="checkbox" id="saveInfo"><label for="saveInfo" style="font-size: 0.85rem; color: #666; cursor: pointer;"> Simpan informasi ini sebagai alamat baru</label>
                     <br>
                     <div class="section-title">Metode Pembayaran</div>
                     <div class="payment-box">
@@ -135,7 +143,49 @@
         document.getElementById('subTotal').innerText = 'Rp ' + subTotal.toLocaleString('id-ID');
         document.getElementById('finalTotal').innerText = 'Rp ' + finalTotal.toLocaleString('id-ID');
 
-        // 3. LOGIKA BARU: Simpan Order ke Database via API & Kirim WA
+        // 3. Load saved addresses
+        async function loadSavedAddresses() {
+            try {
+                const idUser = userData.idUser || userData.id;
+                const response = await fetch(`/api/users/${idUser}/addresses`);
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.length > 0) {
+                    const selectBox = document.getElementById('savedAddresses');
+                    result.data.forEach(addr => {
+                        const option = document.createElement('option');
+                        option.value = JSON.stringify({
+                            nama: addr.namaPenerima,
+                            telp: addr.noTelp,
+                            alamat: addr.alamat
+                        });
+                        option.textContent = `${addr.namaPenerima} - ${addr.alamat.substring(0, 40)}...`;
+                        selectBox.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading addresses:', error);
+            }
+        }
+
+        // 4. Function untuk pilih alamat dari dropdown
+        function selectSavedAddress() {
+            const selectBox = document.getElementById('savedAddresses');
+            const selectedValue = selectBox.value;
+
+            if (selectedValue) {
+                const addressData = JSON.parse(selectedValue);
+                document.getElementById('nama').value = addressData.nama;
+                document.getElementById('wa').value = addressData.telp;
+                document.getElementById('alamat').value = addressData.alamat;
+            } else {
+                document.getElementById('nama').value = '';
+                document.getElementById('wa').value = '';
+                document.getElementById('alamat').value = '';
+            }
+        }
+
+        // 5. LOGIKA BARU: Simpan Order ke Database via API & Kirim WA
         async function kirimPesanan(e) {
             e.preventDefault();
             
@@ -144,6 +194,7 @@
                 const wa = document.getElementById('wa').value;
                 const alamat = document.getElementById('alamat').value;
                 const payment = document.querySelector('input[name="payment"]:checked').value;
+                const saveAddr = document.getElementById('saveInfo').checked;
 
                 // Gunakan userData yang sudah di-load di atas
                 const idUser = userData.idUser || userData.id;
@@ -179,7 +230,24 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // A. BUAT DATA ORDER UNTUK DISIMPAN KE HISTORY (untuk tampilan lokal)
+                    // A. Jika checkbox "Simpan alamat" dicentang, simpan ke database
+                    if (saveAddr) {
+                        try {
+                            await fetch(`/api/users/${idUser}/addresses`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    namaPenerima: nama,
+                                    noTelp: wa,
+                                    alamat: alamat
+                                })
+                            });
+                        } catch (err) {
+                            console.error('Error saving address:', err);
+                        }
+                    }
+
+                    // B. BUAT DATA ORDER UNTUK DISIMPAN KE HISTORY (untuk tampilan lokal)
                     const newOrder = {
                         id: 'ORD-' + result.data.idPemesanan,
                         date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
@@ -204,7 +272,7 @@
                     message += `------------------%0A`;
                     message += `Nama: ${nama}%0AHP: ${wa}%0AAlamat: ${alamat}%0APembayaran: ${payment}`;
 
-                    // E. BUKA WA & REDIRECT KE PROFILE
+                    // F. BUKA WA & REDIRECT KE PROFILE
                     window.open(`https://wa.me/6282136656877?text=${message}`, '_blank');
                     alert('✓ Pesanan berhasil dibuat! Data sudah disimpan di database.');
                     window.location.href = 'profile.html';
@@ -216,6 +284,9 @@
                 alert('❌ Terjadi kesalahan saat membuat pesanan');
             }
         }
+
+        // Load saved addresses saat halaman terbuka
+        document.addEventListener('DOMContentLoaded', loadSavedAddresses);
     </script>
 </body>
 </html>
