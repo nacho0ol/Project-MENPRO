@@ -318,8 +318,9 @@
         padding-top: 15px;
         border-top: 1px dashed #eee;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
       }
       .total-label {
         font-size: 0.9rem;
@@ -342,7 +343,7 @@
         <div class="nav-links">
           <a href="index.html#katalog">Produk</a>
           <a href="index.html#tentang">Tentang Kami</a>
-          <a href="#footer-area">Kontak Kami</a>
+          <a href="index.html#footer-area">Kontak Kami</a>
         </div>
         <div class="nav-icons">
           <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
@@ -421,12 +422,13 @@
           </div>
 
           <div id="tab-address" class="tab-content">
-            <div class="dashboard-header">
-              <h2>Alamat Saya</h2>
+            <div class="dashboard-header" style="justify-content: space-between; align-items: center; gap: 20px;">
+              <h2 style="margin: 0;">Alamat Saya</h2>
               <button
                 type="button"
                 class="btn-primary"
                 onclick="openAddressModal()"
+                style="margin: 0; flex-shrink: 0;"
               >
                 <i class="fas fa-plus"></i> Tambah Alamat
               </button>

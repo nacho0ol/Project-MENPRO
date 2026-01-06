@@ -121,8 +121,11 @@
             window.location.href = 'login.html';
         }
 
-        // 2. Load Cart
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        // 2. Load Cart - FILTER HANYA YANG DIPILIH (selected: true)
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        // Filter hanya item yang dicentang
+        cart = cart.filter(item => item.selected !== false);
+        
         if (cart.length === 0) { window.location.href = 'index.html'; }
 
         const itemList = document.getElementById('itemList');
