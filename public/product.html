@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Produk - Olivia Meat</title>
+    <title>Detail Produk - Olivia Meat n Fresh</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
     <link rel="stylesheet" href="style.css" />
@@ -11,7 +11,10 @@
 <body>
     <nav class="navbar">
       <div class="container nav-content">
-        <a href="index.html" class="logo"><img src="logo.png" alt="Logo"><span>Olivia Meat</span></a>
+        <a href="index.html" class="logo">
+            <img src="uploads/LOGO.png" alt="Logo">
+            <span>Olivia Meat n Fresh</span>
+        </a>
         <div class="nav-links">
           <a href="index.html#katalog">Produk</a>
           <a href="index.html#tentang">Tentang Kami</a>
@@ -29,11 +32,11 @@
         <a href="index.html#katalog" style="display: inline-block; margin-bottom: 20px; color: #666;"><i class="fas fa-arrow-left"></i> Kembali ke Katalog</a>
         <div class="detail-wrapper">
             <div class="detail-img">
-                <img id="imgProduk" src="" alt="Produk" />
+                <img id="imgProduk" src="https://via.placeholder.com/400x400?text=Loading..." onerror="this.src='https://via.placeholder.com/400?text=No+Image'" alt="Produk" />
             </div>
             <div class="detail-info">
                 <h1 id="namaProduk">Loading...</h1>
-                <span class="product-price" id="hargaProduk">Rp 0 <small>/ pack</small></span>
+                <span class="product-price" id="hargaProduk">Rp 0 <small>/ kg</small></span>
                 <div class="po-badge"><i class="fas fa-clock"></i> Sistem Pre-Order (PO)</div>
                 <p class="product-desc">
                     Daging sapi segar kualitas premium dengan sertifikasi halal. 
@@ -57,19 +60,21 @@
         const params = new URLSearchParams(window.location.search);
         const productId = params.get('id');
         
+        // Link gambar default (Foto Daging Sapi) untuk jaga-jaga
+        const defaultImage = 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80';
+
         // Data produk global
         let productData = {
             idProduk: null,
             namaProduk: 'Loading...',
             harga: 0,
-            filepath: 'https://images.unsplash.com/photo-1588168333986-5078d3ae3976?auto=format&fit=crop&w=800&q=80'
+            filepath: defaultImage
         };
 
         // 2. Fetch data produk dari API
         async function loadProductDetail() {
             if (!productId) {
-                // Fallback jika tidak ada ID
-                displayProduct();
+                displayProduct(); // Tampilkan data default kalau tidak ada ID
                 return;
             }
             
@@ -94,8 +99,11 @@
         // 3. Tampilkan data produk ke layar
         function displayProduct() {
             document.getElementById('namaProduk').innerText = productData.namaProduk;
-            document.getElementById('hargaProduk').innerHTML = 'Rp ' + parseInt(productData.harga).toLocaleString('id-ID') + ' <small>/ pack</small>';
-            document.getElementById('imgProduk').src = productData.filepath;
+            document.getElementById('hargaProduk').innerHTML = 'Rp ' + parseInt(productData.harga).toLocaleString('id-ID') + ' <small>/ kg</small>';
+            
+            // Cek apakah ada gambar dari database? Kalau tidak, pakai default.
+            const imageUrl = (productData.filepath && productData.filepath !== '') ? productData.filepath : defaultImage;
+            document.getElementById('imgProduk').src = imageUrl;
         }
 
         // 4. Logic Tambah Kurang Jumlah
@@ -106,33 +114,30 @@
 
         // 5. Logic Masukkan ke Keranjang (LocalStorage)
         function addToCart() {
-            // Ambil data keranjang lama (kalau ada)
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            
-            // Cek apakah produk sudah ada di cart?
             let existingItem = cart.find(item => item.idProduk === productData.idProduk);
             
+            // PERBAIKAN: Tentukan gambar yang mau disimpan (Gunakan default jika database kosong)
+            const imageToSave = (productData.filepath && productData.filepath !== '') ? productData.filepath : defaultImage;
+
             if (existingItem) {
-                existingItem.qty += qty; // Kalau ada, tambah jumlahnya aja
+                // PERBAIKAN: Gunakan parseInt agar dijumlahkan sebagai angka (Matematika)
+                existingItem.qty = parseInt(existingItem.qty) + parseInt(qty);
             } else {
-                // Kalau belum ada, masukkan sebagai item baru
                 cart.push({ 
                     idProduk: productData.idProduk,
                     name: productData.namaProduk, 
-                    price: productData.harga, 
-                    img: productData.filepath, 
-                    qty: qty 
+                    price: parseInt(productData.harga), 
+                    img: imageToSave, // Simpan gambar yang aman
+                    qty: parseInt(qty) 
                 });
             }
 
-            // Simpan balik ke LocalStorage
             localStorage.setItem('cart', JSON.stringify(cart));
-            
             alert('Berhasil masuk keranjang! 🛒');
-            window.location.href = 'cart.html'; // Pindah ke halaman cart
+            window.location.href = 'cart.html'; 
         }
 
-        // Load produk saat halaman terbuka
         document.addEventListener('DOMContentLoaded', loadProductDetail);
     </script>
 </body>
