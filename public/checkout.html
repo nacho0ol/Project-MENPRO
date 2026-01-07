@@ -128,6 +128,9 @@
         
         if (cart.length === 0) { window.location.href = 'index.html'; }
 
+        // Untuk menyimpan data profil user
+        let userProfile = {};
+
         const itemList = document.getElementById('itemList');
         let subTotal = 0;
 
@@ -145,6 +148,21 @@
         const finalTotal = subTotal + 2000;
         document.getElementById('subTotal').innerText = 'Rp ' + subTotal.toLocaleString('id-ID');
         document.getElementById('finalTotal').innerText = 'Rp ' + finalTotal.toLocaleString('id-ID');
+
+        // 2.5 Fetch user profile saat halaman dibuka
+        async function loadUserProfile() {
+            try {
+                const idUser = userData.idUser || userData.id;
+                const response = await fetch(`/api/users/${idUser}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    userProfile = result.data;
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
 
         // 3. Load saved addresses
         async function loadSavedAddresses() {
@@ -210,12 +228,14 @@
                 }));
 
                 // Siapkan data order untuk API
+                // SEMUA data dari userProfile (data asli profil), bukan dari form input
+                // Ini memastikan profile tidak berubah sama sekali saat checkout
                 const orderData = {
                     idUser: parseInt(idUser),
-                    namaDepan: nama.split(' ')[0],
-                    namaBelakang: nama.split(' ').slice(1).join(' ') || '',
-                    no_telp: wa,
-                    alamat: alamat,
+                    namaDepan: userProfile.namaDepan || '',
+                    namaBelakang: userProfile.namaBelakang || '',
+                    no_telp: userProfile.no_telp || '',
+                    alamat: userProfile.alamat || '',
                     payment_method: payment,
                     items: items,
                     ongkir: 0 // Gratis ongkir
@@ -296,7 +316,10 @@
         }
 
         // Load saved addresses saat halaman terbuka
-        document.addEventListener('DOMContentLoaded', loadSavedAddresses);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadSavedAddresses();
+        });
     </script>
 </body>
 </html>
