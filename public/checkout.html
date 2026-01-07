@@ -155,12 +155,15 @@
                 const idUser = userData.idUser || userData.id;
                 const response = await fetch(`/api/users/${idUser}`);
                 const result = await response.json();
-                
+
                 if (result.success && result.data) {
                     userProfile = result.data;
+                    return result.data;
                 }
+                return null;
             } catch (error) {
                 console.error('Error loading user profile:', error);
+                return null;
             }
         }
 
@@ -220,6 +223,26 @@
                 // Gunakan userData yang sudah di-load di atas
                 const idUser = userData.idUser || userData.id;
 
+                // Pastikan userProfile sudah ter-load; jika belum, fetch sekarang
+                if (!userProfile || Object.keys(userProfile).length === 0) {
+                    await loadUserProfile();
+                }
+
+                // Jika profil kosong (akun baru), fallback ke input form agar backend tidak menolak
+                let fname = (userProfile && userProfile.namaDepan) ? userProfile.namaDepan : '';
+                let lname = (userProfile && userProfile.namaBelakang) ? userProfile.namaBelakang : '';
+                let phone = (userProfile && userProfile.no_telp) ? userProfile.no_telp : '';
+                let addr = (userProfile && userProfile.alamat) ? userProfile.alamat : '';
+
+                if (!fname) {
+                    const parts = (nama || '').trim().split(/\s+/).filter(Boolean);
+                    if (parts.length > 0) {
+                        fname = parts.shift();
+                        lname = lname || parts.join(' ');
+                    }
+                }
+                if (!phone) phone = wa || '';
+                if (!addr) addr = alamat || '';
                 // Prepare items dari cart untuk API
                 const items = cart.map(item => ({
                     idProduk: item.idProduk || item.id || 1,
@@ -228,18 +251,27 @@
                 }));
 
                 // Siapkan data order untuk API
-                // SEMUA data dari userProfile (data asli profil), bukan dari form input
-                // Ini memastikan profile tidak berubah sama sekali saat checkout
+                // Gunakan data profil jika ada, jika tidak gunakan fallback dari form input
                 const orderData = {
                     idUser: parseInt(idUser),
-                    namaDepan: userProfile.namaDepan || '',
-                    namaBelakang: userProfile.namaBelakang || '',
-                    no_telp: userProfile.no_telp || '',
-                    alamat: userProfile.alamat || '',
+                    namaDepan: fname || '',
+                    namaBelakang: lname || '',
+                    no_telp: phone || '',
+                    alamat: addr || '',
                     payment_method: payment,
                     items: items,
                     ongkir: 0 // Gratis ongkir
                 };
+
+                // Validasi sebelum POST: pastikan customer + items terpenuhi
+                if (!orderData.namaDepan || !orderData.no_telp || !orderData.alamat) {
+                    alert('Silakan lengkapi Nama, No. WhatsApp, dan Alamat di form checkout sebelum melanjutkan.');
+                    return;
+                }
+                if (!orderData.items || orderData.items.length === 0) {
+                    alert('Tidak ada item yang dipilih. Silakan pilih produk di keranjang.');
+                    return;
+                }
 
                 // POST ke API
                 const response = await fetch('/api/orders', {
@@ -316,9 +348,9 @@
         }
 
         // Load saved addresses saat halaman terbuka
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUserProfile();
-            loadSavedAddresses();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadUserProfile();
+            await loadSavedAddresses();
         });
     </script>
 </body>
