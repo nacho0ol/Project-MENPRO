@@ -265,8 +265,15 @@
                     orderHistory.unshift(newOrder);
                     localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
 
-                    // C. HAPUS KERANJANG (Karena sudah dibeli)
-                    localStorage.removeItem('cart');
+                    // C. HAPUS HANYA ITEM YANG DI-CHECKOUT DARI KERANJANG
+                    // Item yang tidak dipilih (selected = false) harus tetap ada di cart
+                    let allCart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    let remainingCart = allCart.filter(item => !item.selected);
+                    if (remainingCart.length > 0) {
+                        localStorage.setItem('cart', JSON.stringify(remainingCart));
+                    } else {
+                        localStorage.removeItem('cart');
+                    }
 
                     // D. KIRIM KE WA
                     let message = `Halo Admin Olivia Meat!%0A%0APesanan Baru (${newOrder.id}):%0A`;
