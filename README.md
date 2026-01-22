@@ -87,7 +87,7 @@ Project-MENPRO/
 
 ### Prasyarat
   - Node.js (v14+)
-  - MySQL Server (XAMPP / MySQL Installer)
+  - MySQL (MYQL WorkBench
 
 ### 1. Persiapan Database
 1. Buka MySQL Client (phpMyAdmin atau MySQL Workbench).
@@ -108,9 +108,25 @@ PORT=3000
 npm install
 
 ### 4. Jalankan aplikasi
-npm start
+npm run dev
 
 -----
+```
+
+### Visualisasi 
+
+<img width="1919" height="995" alt="Screenshot 2026-01-22 174239" src="https://github.com/user-attachments/assets/9ac12d76-ab3a-40a9-966a-aa58860f2f0d" />
+<img width="1919" height="946" alt="Screenshot 2026-01-22 174256" src="https://github.com/user-attachments/assets/a22241e2-3c9c-42f0-b840-05e3fb1d4b51" />
+<img width="1919" height="987" alt="Screenshot 2026-01-22 174310" src="https://github.com/user-attachments/assets/2cd2d521-ff7e-43af-9375-a86ebe824552" />
+<img width="1918" height="983" alt="Screenshot 2026-01-22 174341" src="https://github.com/user-attachments/assets/f832a82e-cbe1-463c-84a0-6e9d08805669" />
+<img width="1919" height="986" alt="Screenshot 2026-01-22 174358" src="https://github.com/user-attachments/assets/e6051e98-747d-4575-b42d-f8c600777147" />
+<img width="1919" height="989" alt="Screenshot 2026-01-22 174443" src="https://github.com/user-attachments/assets/b6361c4e-8ba2-4dfb-a3be-fc855e668859" />
+<img width="1919" height="985" alt="Screenshot 2026-01-22 174513" src="https://github.com/user-attachments/assets/df17d242-c9f7-4680-a2bc-60c4ec9731f5" />
+<img width="1919" height="960" alt="Screenshot 2026-01-22 174522" src="https://github.com/user-attachments/assets/a73085ef-c8dc-4166-9e9b-75056542bb90" />
+<img width="1919" height="981" alt="Screenshot 2026-01-22 174814" src="https://github.com/user-attachments/assets/300b5c5a-5ea9-4b58-815d-564154b6e12f" />
+<img width="1919" height="991" alt="Screenshot 2026-01-22 174846" src="https://github.com/user-attachments/assets/5ed825e4-91f5-4de0-95c3-32a9904a452d" />
+<img width="1919" height="1000" alt="Screenshot 2026-01-22 174858" src="https://github.com/user-attachments/assets/8e945369-d1c7-4b45-b7ad-48f220395036" />
+<img width="1919" height="986" alt="Screenshot 2026-01-22 174910" src="https://github.com/user-attachments/assets/0ac4af46-8539-4483-a525-cc8865a33f8c" />
 
 
 
